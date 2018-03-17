@@ -42,11 +42,4 @@ public class MaximumTest {
 		assertEquals(60,maximum(array, 0, 12));
 		
 	}
-
-	
-
-	
-	
-
-
 }
