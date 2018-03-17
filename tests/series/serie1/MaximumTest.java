@@ -43,13 +43,6 @@ public class MaximumTest {
 		
 	}
 
-	@Test
-	public void test_getMaximum_with_also_four_shifted_positions2(){
-		int[] array = {59, 60};
-		assertEquals(60,maximum(array, 0, 1));
-
-	}
-
 	
 
 	
