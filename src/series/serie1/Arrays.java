@@ -35,8 +35,8 @@ public class Arrays {
         if(left>right)
             return 0;
         int mid = left + (right - left) / 2;
-        if(mid==left && v[mid+1] < v[mid])
-            return v[mid];
+        if (right-left<2)
+            return Math.max(v[left],v[right]);
         if (v[mid-1] < v[mid] && v[mid+1] < v[mid])
             return v[mid];
         if(v[mid-1]<v[mid] && v[mid+1]>v[mid])
