@@ -41,7 +41,7 @@ public class toOneFile {
     public static void main(String[] args) throws IOException {
         int len = args.length;
         MyFile[] myFiles=new MyFile[len];
-        
+
         for (int i = 0; i < len; i++) {
             myFiles[i]=new MyFile(args[i]);
         }
