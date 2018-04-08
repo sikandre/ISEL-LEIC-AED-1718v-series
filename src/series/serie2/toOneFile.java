@@ -5,6 +5,7 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.lang.reflect.Array;
 import java.util.Arrays;
+import java.util.Comparator;
 
 public class toOneFile {
     static class MyFile{
@@ -25,7 +26,8 @@ public class toOneFile {
             return line;
         }
 
-        public String getWord(int nword) {
+        public String getWord() {
+            int nword=0;
             String word[] = new String[0];
             if(nword>line.length())
                 return null;
@@ -45,11 +47,38 @@ public class toOneFile {
         for (int i = 0; i < len; i++) {
             myFiles[i]=new MyFile(args[i]);
         }
-
-        String word=myFiles[0].getWord(0);
-        myFiles[0].getNewLine();
-        word=myFiles[0].getWord(0);
+        buildMinHeap(myFiles);
 
 
+    }
+
+    private static void buildMinHeap(MyFile[] myFiles) {
+        int size = myFiles.length;
+        for (int i = 0; i < size; i++) {
+            minHeapify(myFiles, i, size, String::compareTo);
+        }
+    }
+
+    private static void minHeapify(MyFile[] w, int p, int hSize, Comparator<String>cmp) {
+        int l, r, min;
+        l = left(p);
+        r = right(p);
+        min=p;
+        //if(l < hSize && v[l] > v[p]) min=l;
+        if(l <= hSize && cmp.compare(w[l].getWord(),w[p].getWord())<0) min=l;
+
+/*        if ( r < hSize && v[r] > v[min]) min = r;
+        if ( min == p ) return;
+        exchange(v, p, min);*/
+        minHeapify(w, min, hSize, cmp);
+
+    }
+
+    private static int right(int p) {
+        return 2 * p + 2;
+    }
+
+    private static int left(int p) {
+        return 2 * p + 1;
     }
 }
