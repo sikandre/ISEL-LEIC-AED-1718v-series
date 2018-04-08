@@ -65,11 +65,16 @@ public class toOneFile {
         r = right(p);
         min=p;
         //if(l < hSize && v[l] > v[p]) min=l;
-        if(l <= hSize && cmp.compare(w[l].getWord(),w[p].getWord())<0) min=l;
+        if(l <= hSize && cmp.compare(w[l].getWord(),w[p].getWord())>0)
+            min=l;
 
-/*        if ( r < hSize && v[r] > v[min]) min = r;
+        //if ( r < hSize && v[r] > v[min]) min = r;
+        if(r <= hSize && cmp.compare(w[r].getWord(),w[p].getWord())>0)
+            min=r;
+
+
         if ( min == p ) return;
-        exchange(v, p, min);*/
+        //exchange(v, p, min);
         minHeapify(w, min, hSize, cmp);
 
     }
