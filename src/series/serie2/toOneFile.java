@@ -1,25 +1,25 @@
 package series.serie2;
 
-import java.io.BufferedReader;
-import java.io.FileReader;
-import java.io.IOException;
-import java.lang.reflect.Array;
-import java.util.Arrays;
+import java.io.*;
 import java.util.Comparator;
 
 public class toOneFile {
     static class MyFile{
         private BufferedReader br;
         private String line;
-        private String word;
+        private int nWord;
 
-        public MyFile(String file) throws IOException {
+        public MyFile(String file, int nWord) throws IOException {
+            this.nWord=nWord;
             br = new BufferedReader(new FileReader(file));
             line=br.readLine();
         }
 
         public String getNewLine() throws IOException {
-            return line=br.readLine();
+            do{
+                line=br.readLine();
+            }while (getWord()==null);
+            return line;
         }
 
         public String getLine() {
@@ -27,36 +27,63 @@ public class toOneFile {
         }
 
         public String getWord() {
-            int nword=0;
-            String word[] = new String[0];
-            if(nword>line.length())
+            String word[] = line.split(" ");
+            if(nWord > word.length-1)
                 return null;
+            else
+                return word[nWord];
 
-            for (int i = 0; i <= nword; i++) {
-                if(i==nword)
-                    word = line.split(" ");
-            }
-            return word[0];
         }
     }
 
+    static PrintWriter pw;
     public static void main(String[] args) throws IOException {
+
         int len = args.length;
         MyFile[] myFiles=new MyFile[len];
+        creatFile();
 
         for (int i = 0; i < len; i++) {
-            myFiles[i]=new MyFile(args[i]);
+            myFiles[i]=new MyFile(args[i], 1);
         }
-        buildMinHeap(myFiles);
+        int size = myFiles.length;
+        buildMinHeap(myFiles, size);
 
 
     }
 
-    private static void buildMinHeap(MyFile[] myFiles) {
-        int size = myFiles.length;
-        for (int i = 0; i < size; i++) {
-            minHeapify(myFiles, i, size, String::compareTo);
+    private static void buildMinHeap(MyFile[] myFiles, int size) throws IOException {
+        if(size==1){
+            do{
+                writeToFile(myFiles[0].getLine());
+            }while (myFiles[0].getNewLine()!=null);
+            pw.close();
         }
+        else {
+            int pos = (size >> 1) - 1;
+            for (; pos >= 0; pos--) {
+                minHeapify(myFiles, pos, size, String::compareTo);
+                writeToFile(myFiles[0].getLine());
+                if (myFiles[0].getNewLine() == null) {
+                    exchange(myFiles, 0, size - 1);
+                    --size;
+                }
+                if (size > 0)
+                    buildMinHeap(myFiles, size);
+            }
+        }
+    }
+
+    private static void creatFile() throws FileNotFoundException {
+        OutputStream out;
+            out = new FileOutputStream("outPut.txt");
+            pw = new PrintWriter(out);
+    }
+
+    private static void writeToFile(String line) {
+            pw.println(line);
+            pw.flush();
+
     }
 
     private static void minHeapify(MyFile[] w, int p, int hSize, Comparator<String>cmp) {
@@ -64,26 +91,30 @@ public class toOneFile {
         l = left(p);
         r = right(p);
         min=p;
-        //if(l < hSize && v[l] > v[p]) min=l;
-        if(l <= hSize && cmp.compare(w[l].getWord(),w[p].getWord())>0)
+
+        if(l < hSize && cmp.compare(w[l].getWord(),w[p].getWord())<0)
             min=l;
 
-        //if ( r < hSize && v[r] > v[min]) min = r;
-        if(r <= hSize && cmp.compare(w[r].getWord(),w[p].getWord())>0)
+        if(r < hSize && cmp.compare(w[r].getWord(),w[p].getWord())<0)
             min=r;
 
-
         if ( min == p ) return;
-        //exchange(v, p, min);
+        exchange(w, p, min);
         minHeapify(w, min, hSize, cmp);
 
     }
 
+    private static void exchange(MyFile[] w, int i, int j) {
+        MyFile tmp = w[i];
+        w[i] = w[j];
+        w[j] = tmp;
+    }
+
     private static int right(int p) {
-        return 2 * p + 2;
+        return (p<<1)+2;
     }
 
     private static int left(int p) {
-        return 2 * p + 1;
+        return (p<<1)+1;
     }
 }
