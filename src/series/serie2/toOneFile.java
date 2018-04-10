@@ -4,6 +4,10 @@ import java.io.*;
 import java.util.Comparator;
 
 public class toOneFile {
+
+    public static final String FILE_NAME = "outPut.txt";
+    private static int count =0;
+
     static class MyFile{
         private BufferedReader br;
         private String line;
@@ -16,9 +20,12 @@ public class toOneFile {
         }
 
         public String getNewLine() throws IOException {
+            count++;
+            if(count == 4095)
+                System.out.println("stop");
             do{
                 line=br.readLine();
-            }while (getWord()==null);
+            }while (line!= null && getWord()==null);
             return line;
         }
 
@@ -27,16 +34,18 @@ public class toOneFile {
         }
 
         public String getWord() {
+            if(line==null)
+                return null;
             String word[] = line.split(" ");
             if(nWord > word.length-1)
                 return null;
             else
                 return word[nWord];
-
         }
     }
 
-    static PrintWriter pw;
+    private static BufferedWriter bw;
+
     public static void main(String[] args) throws IOException {
 
         int len = args.length;
@@ -44,20 +53,19 @@ public class toOneFile {
         creatFile();
 
         for (int i = 0; i < len; i++) {
-            myFiles[i]=new MyFile(args[i], 1);
+            myFiles[i]=new MyFile(args[i], 0);
         }
         int size = myFiles.length;
         buildMinHeap(myFiles, size);
-
-
     }
+
 
     private static void buildMinHeap(MyFile[] myFiles, int size) throws IOException {
         if(size==1){
             do{
                 writeToFile(myFiles[0].getLine());
             }while (myFiles[0].getNewLine()!=null);
-            pw.close();
+            bw.close();
         }
         else {
             int pos = (size >> 1) - 1;
@@ -68,22 +76,9 @@ public class toOneFile {
                     exchange(myFiles, 0, size - 1);
                     --size;
                 }
-                if (size > 0)
-                    buildMinHeap(myFiles, size);
+                buildMinHeap(myFiles, size);
             }
         }
-    }
-
-    private static void creatFile() throws FileNotFoundException {
-        OutputStream out;
-            out = new FileOutputStream("outPut.txt");
-            pw = new PrintWriter(out);
-    }
-
-    private static void writeToFile(String line) {
-            pw.println(line);
-            pw.flush();
-
     }
 
     private static void minHeapify(MyFile[] w, int p, int hSize, Comparator<String>cmp) {
@@ -101,7 +96,6 @@ public class toOneFile {
         if ( min == p ) return;
         exchange(w, p, min);
         minHeapify(w, min, hSize, cmp);
-
     }
 
     private static void exchange(MyFile[] w, int i, int j) {
@@ -116,5 +110,16 @@ public class toOneFile {
 
     private static int left(int p) {
         return (p<<1)+1;
+    }
+
+    private static void creatFile() throws IOException {
+        FileWriter fw = new FileWriter(FILE_NAME);
+        bw = new BufferedWriter(fw);
+    }
+
+    private static void writeToFile(String line) throws IOException {
+        bw.write(line);
+        bw.newLine();
+        //bw.flush();
     }
 }
