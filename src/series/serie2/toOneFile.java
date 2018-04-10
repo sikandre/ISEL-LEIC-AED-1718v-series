@@ -5,13 +5,13 @@ import java.util.Comparator;
 
 public class toOneFile {
 
-    public static final String FILE_NAME = "outPut.txt";
-    private static int count =0;
+    private static final String FILE_NAME = "outPut.txt";
 
     static class MyFile{
         private BufferedReader br;
         private String line;
         private int nWord;
+        private String word[];
 
         public MyFile(String file, int nWord) throws IOException {
             this.nWord=nWord;
@@ -20,9 +20,6 @@ public class toOneFile {
         }
 
         public String getNewLine() throws IOException {
-            count++;
-            if(count == 4095)
-                System.out.println("stop");
             do{
                 line=br.readLine();
             }while (line!= null && getWord()==null);
@@ -36,7 +33,7 @@ public class toOneFile {
         public String getWord() {
             if(line==null)
                 return null;
-            String word[] = line.split(" ");
+            word = line.split(" ");
             if(nWord > word.length-1)
                 return null;
             else
@@ -57,27 +54,30 @@ public class toOneFile {
         }
         int size = myFiles.length;
         buildMinHeap(myFiles, size);
+        fillFile(myFiles, size);
     }
 
+    private static void fillFile(MyFile[] myFiles, int size) throws IOException {
+        while (size>1) {
+            writeToFile(myFiles[0].getLine());
+            if (myFiles[0].getNewLine() == null) {
+                exchange(myFiles, 0, size - 1);
+                --size;
+            }
+            if(size==1)
+                break;
+            minHeapify(myFiles, ((size >> 1) - 1), size, String::compareTo);
+        }
+        do{
+            writeToFile(myFiles[0].getLine());
+        }while (myFiles[0].getNewLine()!=null);
+        bw.close();
+        }
 
     private static void buildMinHeap(MyFile[] myFiles, int size) throws IOException {
-        if(size==1){
-            do{
-                writeToFile(myFiles[0].getLine());
-            }while (myFiles[0].getNewLine()!=null);
-            bw.close();
-        }
-        else {
-            int pos = (size >> 1) - 1;
-            for (; pos >= 0; pos--) {
-                minHeapify(myFiles, pos, size, String::compareTo);
-                writeToFile(myFiles[0].getLine());
-                if (myFiles[0].getNewLine() == null) {
-                    exchange(myFiles, 0, size - 1);
-                    --size;
-                }
-                buildMinHeap(myFiles, size);
-            }
+        int pos = (size >> 1) - 1;
+        for (; pos >= 0; pos--) {
+            minHeapify(myFiles, pos, size, String::compareTo);
         }
     }
 
@@ -120,6 +120,6 @@ public class toOneFile {
     private static void writeToFile(String line) throws IOException {
         bw.write(line);
         bw.newLine();
-        //bw.flush();
+        bw.flush();
     }
 }
