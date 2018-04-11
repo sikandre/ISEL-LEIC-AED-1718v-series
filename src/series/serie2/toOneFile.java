@@ -16,13 +16,17 @@ public class toOneFile {
         public MyFile(String file, int nWord) throws IOException {
             this.nWord=nWord;
             br = new BufferedReader(new FileReader(file));
-            line=br.readLine();
+            line=getNewLine();
         }
 
         public String getNewLine() throws IOException {
             do{
                 line=br.readLine();
-            }while (line!= null && getWord()==null);
+                if(line!=null)
+                    word=line.split(" ");
+                else
+                    return line;
+            }while (nWord>word.length-1);
             return line;
         }
 
@@ -31,9 +35,6 @@ public class toOneFile {
         }
 
         public String getWord() {
-            if(line==null)
-                return null;
-            word = line.split(" ");
             if(nWord > word.length-1)
                 return null;
             else
@@ -48,13 +49,16 @@ public class toOneFile {
         int len = args.length;
         MyFile[] myFiles=new MyFile[len];
         creatFile();
-
-        for (int i = 0; i < len; i++) {
-            myFiles[i]=new MyFile(args[i], 0);
-        }
         int size = myFiles.length;
-        buildMinHeap(myFiles, size);
-        fillFile(myFiles, size);
+        for (int i = len-1; i >= 0; i--) {
+            myFiles[i]=new MyFile(args[i], 1);
+            if(myFiles[i].getWord()==null)
+                size--;
+        }
+        if(size>0) {
+            buildMinHeap(myFiles, size);
+            fillFile(myFiles, size);
+        }
     }
 
     private static void fillFile(MyFile[] myFiles, int size) throws IOException {
