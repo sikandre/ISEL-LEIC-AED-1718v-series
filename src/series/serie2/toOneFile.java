@@ -5,7 +5,7 @@ import java.util.Comparator;
 
 public class toOneFile {
 
-    private static final String FILE_NAME = "outPut.txt";
+    private static final String FILE_NAME = "output.txt";
 
     static class MyFile{
         private BufferedReader br;
@@ -51,7 +51,7 @@ public class toOneFile {
         creatFile();
         int size = myFiles.length;
         for (int i = len-1; i >= 0; i--) {
-            myFiles[i]=new MyFile(args[i], 1);
+            myFiles[i]=new MyFile(args[i], 0);
             if(myFiles[i].getWord()==null)
                 size--;
         }
@@ -90,14 +90,11 @@ public class toOneFile {
         l = left(p);
         r = right(p);
         min=p;
-
         if(l < hSize && cmp.compare(w[l].getWord(),w[p].getWord())<0)
             min=l;
-
         if(r < hSize && cmp.compare(w[r].getWord(),w[p].getWord())<0)
             min=r;
-
-        if ( min == p ) return;
+        if (min == p ) return;
         exchange(w, p, min);
         minHeapify(w, min, hSize, cmp);
     }
@@ -124,6 +121,5 @@ public class toOneFile {
     private static void writeToFile(String line) throws IOException {
         bw.write(line);
         bw.newLine();
-        bw.flush();
     }
 }
