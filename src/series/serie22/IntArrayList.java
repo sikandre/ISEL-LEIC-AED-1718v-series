@@ -14,14 +14,13 @@ public class IntArrayList {
 
     public boolean append(int x){
         if(nextIdx >k) return false;
-        arrayList[nextIdx++]=x;
+        arrayList[nextIdx++]=x-val;
         return true;
     }
     public int get(int i) {
         return arrayList[i]+val;
-
-
     }
+    
     public void addToAll(int x){
         val = x;
     }
