@@ -7,19 +7,19 @@ public class toOneFile {
 
     private static final String FILE_NAME = "output.txt";
 
-    static class MyFile{
+    static class MyFile{//classe interna para obter informacoes de um file em expecifico indicado no construtor
         private BufferedReader br;
         private String line;
         private int nWord;
         private String word[];
 
-        public MyFile(String file, int nWord) throws IOException {
+        public MyFile(String file, int nWord) throws IOException {//construtor
             this.nWord=nWord;
             br = new BufferedReader(new FileReader(file));
             line=getNewLine();
         }
 
-        public String getNewLine() throws IOException {
+        public String getNewLine() throws IOException {//saber string seguinte
             do{
                 line=br.readLine();
                 if(line!=null)
@@ -32,9 +32,9 @@ public class toOneFile {
 
         public String getLine() {
             return line;
-        }
+        }//retorna toda a linha
 
-        public String getWord() {
+        public String getWord() {//retorna palavra
             if(nWord > word.length-1)
                 return null;
             else
@@ -61,7 +61,8 @@ public class toOneFile {
         }
     }
 
-    private static void fillFile(MyFile[] myFiles, int size) throws IOException {
+    private static void fillFile(MyFile[] myFiles, int size) throws IOException {//realiza a escrita no ficheiro de output verifica quando acaba de escrever todas as palavas de um dos txt de input
+        //quando termina adapta o tamanho até que so resta 1 ficheiro e como as palavras estao dispostas ordenadamente como pretendemos apenas escreve o ultimo até ao final do txt
         while (size>1) {
             writeToFile(myFiles[0].getLine());
             if (myFiles[0].getNewLine() == null) {
@@ -85,7 +86,7 @@ public class toOneFile {
         }
     }
 
-    private static void minHeapify(MyFile[] w, int p, int hSize, Comparator<String>cmp) {
+    private static void minHeapify(MyFile[] w, int p, int hSize, Comparator<String>cmp) {//garante que os descendentes de cada nó sejam maiores ou iguais que o nó
         int l, r, min;
         l = left(p);
         r = right(p);
@@ -99,7 +100,7 @@ public class toOneFile {
         minHeapify(w, min, hSize, cmp);
     }
 
-    private static void exchange(MyFile[] w, int i, int j) {
+    private static void exchange(MyFile[] w, int i, int j) {//realiza uma troca de posicoes(usado no miheapify para colocar o que pretendemos na posiçao da raiz da arvore binaria)
         MyFile tmp = w[i];
         w[i] = w[j];
         w[j] = tmp;
@@ -107,18 +108,18 @@ public class toOneFile {
 
     private static int right(int p) {
         return (p<<1)+2;
-    }
+    }//descendente direito
 
     private static int left(int p) {
         return (p<<1)+1;
-    }
+    }//descendente esquerdo
 
-    private static void creatFile() throws IOException {
+    private static void creatFile() throws IOException {//criaçao de ficheiro de output
         FileWriter fw = new FileWriter(FILE_NAME);
         bw = new BufferedWriter(fw);
     }
 
-    private static void writeToFile(String line) throws IOException {
+    private static void writeToFile(String line) throws IOException {//escrita no ficheiro de output
         bw.write(line);
         bw.newLine();
     }
