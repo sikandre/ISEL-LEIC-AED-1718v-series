@@ -1,4 +1,4 @@
-package series.serie2;
+package series.serie1;
 
 import java.io.*;
 import java.util.Comparator;
@@ -45,6 +45,7 @@ public class toOneFile {
     private static BufferedWriter bw;
 
     public static void main(String[] args) throws IOException {
+
 
         int len = args.length;
         MyFile[] myFiles=new MyFile[len];

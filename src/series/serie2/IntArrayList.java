@@ -1,4 +1,4 @@
-package series.serie22;
+package series.serie2;
 
 public class IntArrayList {
     private int [] arrayList;
