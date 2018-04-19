@@ -20,7 +20,7 @@ public class ListUtils<E> {
 
     }
 
-    public static <E>  Node<E> merge(Node<E>[] lists,Comparator<E> cmp){
+ /*   public static <E>  Node<E> merge(Node<E>[] lists,Comparator<E> cmp){
         return null;
     }
-}
+}*/
