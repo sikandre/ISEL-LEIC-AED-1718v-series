@@ -1,13 +1,13 @@
 package series.serie2;
 
 
-import Aed.series.serie2.Node;
+import series.serie2.ListUtils.Node;
 import org.junit.jupiter.api.Test;
 
 import java.util.ArrayList;
 import java.util.Comparator;
 
-import static Aed.series.serie2.ListUtils.quicksort;
+import static series.serie2.ListUtils.quicksort;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static series.serie2.ListUtilTest.getRandomList;
 import static series.serie2.ListUtilTest.isSorted;
