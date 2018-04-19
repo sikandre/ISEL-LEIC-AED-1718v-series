@@ -10,21 +10,17 @@ public class ListUtils<E> {
         Node<E> next;
         Node<E> previous;
     }
-    private Node<E> head;
-    public ListUtils() {
-        head=new Node<E>();
-        head.next=head;
-        head.previous=head;
-    }
 
     public static <E> void removeAfterIntersectionPoint(Node<E> list1,Node<E> list2,Comparator<E> cmp){
-        List<Integer> List= new LinkedList<>();
-        Node<E> current= list1.next;
-        int aux=0;
-        while (current!=head){
-            if(current.value==cmp)List.add(aux);
-            ++aux;
-            current=current.next;
+        Node<E> currentList1=list1.previous,currentList2=list2.previous;
+        while (cmp.compare(currentList1.value,currentList2.value)==0){
+            currentList1=currentList1.previous;
+            currentList2=currentList2.previous;
         }
+        list1.previous=currentList1;
+        currentList1.next=list1;
+    }
+    public static <E> void quicksort(Node<E> first, Node<E> last, Comparator<E> cmp){
+        
     }
 }
