@@ -1,14 +1,14 @@
 package series.serie2;
 
 
-import Aed.series.serie2.Node;
+import series.serie2.ListUtils.Node;
 import org.junit.jupiter.api.Test;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 
-import static Aed.series.serie2.ListUtils.merge;
+import static series.serie2.ListUtils.merge;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class MergeTest {

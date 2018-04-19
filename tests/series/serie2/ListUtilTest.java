@@ -1,6 +1,6 @@
 package series.serie2;
 
-import Aed.series.serie2.Node;
+import series.serie2.ListUtils.Node;
 
 import java.io.BufferedReader;
 import java.io.FileReader;

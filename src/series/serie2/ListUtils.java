@@ -21,6 +21,9 @@ public class ListUtils<E> {
         currentList1.next=list1;
     }
     public static <E> void quicksort(Node<E> first, Node<E> last, Comparator<E> cmp){
-        
+
+    }
+    public static <E> Node<E> merge(Node<E>[] lists, Comparator<E> cmp){
+        return null;
     }
 }
