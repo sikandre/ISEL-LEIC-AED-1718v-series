@@ -5,11 +5,7 @@ import java.util.LinkedList;
 import java.util.List;
 
 public class ListUtils<E> {
-    static class Node<E>{
-        E value;
-        Node<E> next;
-        Node<E> previous;
-    }
+
 
     public static <E> void removeAfterIntersectionPoint(Node<E> list1,Node<E> list2,Comparator<E> cmp){
         Node<E> currentList1=list1.previous,currentList2=list2.previous;
@@ -21,6 +17,10 @@ public class ListUtils<E> {
         currentList1.next=list1;
     }
     public static <E> void quicksort(Node<E> first, Node<E> last, Comparator<E> cmp){
-        
+
+    }
+
+    public static <E>  Node<E> merge(Node<E>[] lists,Comparator<E> cmp){
+        return null;
     }
 }
