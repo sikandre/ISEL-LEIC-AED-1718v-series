@@ -1,13 +1,13 @@
 package series.serie2;
 
-
-
-import java.io.BufferedReader;
-import java.io.FileReader;
-import java.io.IOException;
+import series.serie2.Node;
 import java.util.ArrayList;
 import java.util.Comparator;
+
 import java.util.Random;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class ListUtilTest {
 
@@ -21,37 +21,38 @@ public class ListUtilTest {
 		return empty;
 	}
 
+	protected static <T> void assertListEquals( Node<T> expected, Node<T>  result,Comparator<T> cmp) {
+		Node<T> listExpected=expected.next;
+		Node<T> listResult=result.next;
+		while(listExpected!=expected && listResult!=result){
+           assertEquals(0,cmp.compare(listExpected.value,listResult.value));
+			listExpected=listExpected.next;
+			listResult=listResult.next;
+		}
+		assertTrue(listExpected==expected);
+		assertTrue(listResult==result);
+	}
+
 	public static <E> boolean isEmptyListWithSentinel(Node<E> list) {
 		return list.next == list && list.previous == list;
 	}
 
-
-
-	private static void addWordsToList(Node<String> list, String sentence) {
-		if (sentence.length() > 0) {
-			String[] words = sentence.split("\\s+");
-			for (int j = 0; j < words.length; j++) {
-				if (words[j].length() > 0) {
-					list.previous.next = newNode(words[j], list.previous, list);
-					list.previous = list.previous.next;
-				}
-			}
+	static <E>  Node<E> makeList( E ... array) {
+		Node<E> list = emptyListWithSentinel();
+		for ( E v : array ) {
+			list.previous = newNode( v, list.previous, list);
+			list.previous.previous.next= list.previous;
 		}
+		return list;
 	}
-
 
 	/*
 	 * For non_circular lists with no sentinel
 	 */
-
-
-
 	public static <E> Node<E> emptyListWithoutSentinel() {
 		return null;
 	}
-
-	public static Node<Integer> getListWithoutSentinel(int begin, int end,
-			int step) {
+	public static Node<Integer> getListWithoutSentinel(int begin, int end, int step) {
 		if (end < begin)
 			return null;
 		Node<Integer> list = new Node<Integer>();
@@ -120,29 +121,6 @@ public class ListUtilTest {
 		}
 		return true;
 	}
-
-	/*
-	 * For circular lists with sentinel
-	 *
-	 */
-
-
-
-
-    static <E>  Node<E> makeList( E ... array) {
-        Node<E> list = emptyListWithSentinel();
-        for ( E v : array ) {
-            list.previous = newNode( v, list.previous, list);
-            list.previous.previous.next= list.previous;
-        }
-        return list;
-    }
-
-	/*
-	 * For non_circular lists with no sentinel
-	 *
-	 */
-
 
     static  <E> boolean isSorted(Node<E> list,Comparator<E> cmp){
         Node<E> curr=list.next;

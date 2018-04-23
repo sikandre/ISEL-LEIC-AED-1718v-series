@@ -1,7 +1,7 @@
 package series.serie2;
 
 
-import series.serie2.ListUtils.*;
+import series.serie2.Node;
 import org.junit.jupiter.api.Test;
 
 import java.util.ArrayList;

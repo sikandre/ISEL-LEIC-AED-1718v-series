@@ -1,15 +1,13 @@
 package series.serie2;
-
-
-
+import series.serie2.Node;
 import org.junit.jupiter.api.Test;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 
-import static org.junit.jupiter.api.Assertions.assertTrue;
 import static series.serie2.ListUtils.merge;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class MergeTest {
 	static final Comparator<Integer> CMP_REVERSE_ORDER= new Comparator<Integer>() {
@@ -41,7 +39,6 @@ public class MergeTest {
 		assertTrue(ListUtilTest.isSorted(merge, CMP_NATURAL_ORDER));
 		Node<Integer> aux=merge.next;
         for(int i=0; i<elements.size();i++){
-        	
         	assertTrue(elements.get(i).equals(aux.value));
         	aux=aux.next;
         }
