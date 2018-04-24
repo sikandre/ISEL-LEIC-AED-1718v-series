@@ -1,7 +1,6 @@
 package series.serie2;
 
 import java.util.Comparator;
-import java.util.Iterator;
 
 public class ListUtils<E> {
 
@@ -49,31 +48,63 @@ public class ListUtils<E> {
         j.value = val;
     }
 
-    public static <E>  Node<E> merge(Node<E>[] lists,Comparator<E> cmp){
-        int i =0;   //run array
-        int j=1;    //run subarray
-        int size= lists.length;
-        Node <E> head=new Node<>();
-        initSentinel(head);
-        Node <E> current;
-        while (i<size){
-            current=lists[i++];
-            if (current==null)
-                continue;
-            Node<E> sublist = current.next;
-            addNode(head, current);
-            while (sublist!= null && j<size)
-                if(cmp.compare(sublist.value, lists[j].value)>0) {
-                    addNode(head, sublist);
-                    sublist = sublist.next;
-                }
-                else {
-                    addNode(head, lists[j]);
-                    j++;
-                }
+
+
+    public static <E>  Node<E> merge(Node<E>[] lists,Comparator<E> cmp) {
+
+        Node <E> resultList = new Node<>();
+        initSentinel(resultList);
+        int size = lists.length-1;
+        SingleList<E>[] singleList= (SingleList<E>[])new SingleList[size];
+        for(int i=0; i < size; i++){
+            if(lists[i].value!=null)
+                singleList[i] = new SingleList(lists[i]);
+            else
+                size--;
         }
-        return head;
+        if(size>0){
+            buildMinHeap(singleList, size, cmp);
+            //fillList(singleList, size);
+        }
+        
+        return resultList;
     }
+
+    private static <E> void buildMinHeap(SingleList<E>[] singleList, int size, Comparator<E> cmp) {
+        int pos = (size >> 1) - 1;
+        for (; pos >= 0; pos--) {
+            minHeapify(singleList, pos, size, cmp);
+        }
+    }
+
+    private static <E> void minHeapify(SingleList<E>[] list, int pos, int hSize, Comparator<E> cmp) {
+        int l, r, min;
+        l = left(pos);
+        r = right(pos);
+        min=pos;
+        if(l < hSize && cmp.compare(list[l].getValue(),list[pos].getValue())<0)
+            min=l;
+        if(r < hSize && cmp.compare((E)list[r].getValue(),(E)list[pos].getValue())<0)
+            min=r;
+        if (min == pos ) return;
+        exchange(list, pos, min);
+        minHeapify(list, min, hSize, cmp);
+    }
+
+    private static void exchange(SingleList[] list, int pos, int min) {
+        SingleList tmp = list[pos];
+        list[pos] = list[min];
+        list[min] = tmp;
+    }
+
+    private static int right(int p) {
+        return (p<<1)+2;
+    }//descendente direito
+
+    private static int left(int p) {
+        return (p<<1)+1;
+    }//descendente esquerdo
+
 
     private static <E> void addNode(Node<E> head, Node<E> current) {
         current.next=head;
@@ -86,4 +117,23 @@ public class ListUtils<E> {
         head.next=head;
         head.previous=head;
     }
+
+    static class SingleList<E> {
+        Node<E> current;
+        SingleList(Node<E> list) {
+            if(list!=null) {
+                current = list;
+            }
+        }
+        public Node<E> getCurrent() {
+            return current;
+        }
+        E getValue() {
+            return current.value;
+        }
+        public Node<E> getNext() {
+            return current=current.next;
+        }
+    }
 }
+
