@@ -80,7 +80,6 @@ public class ListUtils<E> {
             if(singleList[0].getNextNode()==null)
                 singleList[0]=singleList[--size];
 
-            //minHeapify(singleList, ((size >> 1) - 1), size, cmp);
             buildMinHeap(singleList,size,cmp);
         }
         last.next=resultList;
@@ -129,7 +128,6 @@ public class ListUtils<E> {
         res.previous.next=tmp;
         tmp.previous=res.previous;
         res.previous=tmp;
-        //tmp.next=res;
     }
 
     private static <E> void initSentinel(Node<E> head) {
