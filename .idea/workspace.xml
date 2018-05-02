@@ -1,9 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="3e97808d-6b68-410b-83d6-1521a1250786" name="Default" comment="alguns comentarios no serie 1 parte 2 nao organizei  os diretorios porque ainda nao percebo muito do git quero estragar">
+    <list default="true" id="3e97808d-6b68-410b-83d6-1521a1250786" name="Default" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
-      <change beforePath="$PROJECT_DIR$/src/series/serie2/ListUtils.java" afterPath="$PROJECT_DIR$/src/series/serie2/ListUtils.java" />
     </list>
     <ignored path="$PROJECT_DIR$/out/" />
     <ignored path=".idea/" />
@@ -543,7 +542,14 @@
       <option name="project" value="LOCAL" />
       <updated>1524174558197</updated>
     </task>
-    <option name="localTasksCounter" value="10" />
+    <task id="LOCAL-00010" summary="tirei comentarios">
+      <created>1525299225557</created>
+      <option name="number" value="00010" />
+      <option name="presentableId" value="LOCAL-00010" />
+      <option name="project" value="LOCAL" />
+      <updated>1525299225557</updated>
+    </task>
+    <option name="localTasksCounter" value="11" />
     <servers />
   </component>
   <component name="TestHistory">
@@ -654,7 +660,8 @@
     <MESSAGE value="serie2 test" />
     <MESSAGE value="testes e 3.2" />
     <MESSAGE value="3.2" />
-    <option name="LAST_COMMIT_MESSAGE" value="3.2" />
+    <MESSAGE value="tirei comentarios" />
+    <option name="LAST_COMMIT_MESSAGE" value="tirei comentarios" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
@@ -892,7 +899,7 @@
         <state relative-caret-position="267">
           <caret line="11" column="13" lean-forward="false" selection-start-line="11" selection-start-column="13" selection-end-line="11" selection-end-column="13" />
           <folding>
-            <element signature="imports" expanded="true" />
+            <element signature="imports" expanded="false" />
           </folding>
         </state>
       </provider>
