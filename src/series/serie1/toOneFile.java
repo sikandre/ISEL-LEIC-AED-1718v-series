@@ -94,7 +94,7 @@ public class toOneFile {
         min=p;
         if(l < hSize && cmp.compare(w[l].getWord(),w[p].getWord())<0)
             min=l;
-        if(r < hSize && cmp.compare(w[r].getWord(),w[p].getWord())<0)
+        if(r < hSize && cmp.compare(w[r].getWord(),w[min].getWord())<0)
             min=r;
         if (min == p ) return;
         exchange(w, p, min);

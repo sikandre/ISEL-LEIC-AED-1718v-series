@@ -54,21 +54,39 @@ public class ListUtils<E> {
 
         Node <E> resultList = new Node<>();
         initSentinel(resultList);
-        int size = lists.length-1;
+        int size = lists.length;
         SingleList<E>[] singleList= (SingleList<E>[])new SingleList[size];
-        for(int i=0; i < size; i++){
-            if(lists[i].value!=null)
+        for(int i=0; i < lists.length; i++){
+            if(lists[i]!=null)
                 singleList[i] = new SingleList(lists[i]);
             else
                 size--;
         }
         if(size>0){
             buildMinHeap(singleList, size, cmp);
-            //fillList(singleList, size);
+            fillList(resultList, singleList, size, cmp);
         }
         
         return resultList;
     }
+
+    private static <E> void fillList(Node<E> resultList, SingleList<E>[] singleList, int size, Comparator<E>cmp) {
+        Node<E>last=null;
+        while (size>0){
+
+            last=singleList[0].getList();
+            addNode(resultList, last);
+
+            if(singleList[0].getNextNode()==null)
+                singleList[0]=singleList[--size];
+
+            //minHeapify(singleList, ((size >> 1) - 1), size, cmp);
+            buildMinHeap(singleList,size,cmp);
+        }
+        last.next=resultList;
+
+    }
+
 
     private static <E> void buildMinHeap(SingleList<E>[] singleList, int size, Comparator<E> cmp) {
         int pos = (size >> 1) - 1;
@@ -84,7 +102,7 @@ public class ListUtils<E> {
         min=pos;
         if(l < hSize && cmp.compare(list[l].getValue(),list[pos].getValue())<0)
             min=l;
-        if(r < hSize && cmp.compare((E)list[r].getValue(),(E)list[pos].getValue())<0)
+        if(r < hSize && cmp.compare(list[r].getValue(),list[min].getValue())<0)
             min=r;
         if (min == pos ) return;
         exchange(list, pos, min);
@@ -106,11 +124,12 @@ public class ListUtils<E> {
     }//descendente esquerdo
 
 
-    private static <E> void addNode(Node<E> head, Node<E> current) {
-        current.next=head;
-        current.previous=head.previous;
-        head.previous.next=current;
-        head.previous=current;
+    private static <E> void addNode(Node<E> res, Node<E> src) {
+        Node<E>tmp=src;
+        res.previous.next=tmp;
+        tmp.previous=res.previous;
+        res.previous=tmp;
+        //tmp.next=res;
     }
 
     private static <E> void initSentinel(Node<E> head) {
@@ -119,20 +138,21 @@ public class ListUtils<E> {
     }
 
     static class SingleList<E> {
-        Node<E> current;
+        Node<E> list;
         SingleList(Node<E> list) {
             if(list!=null) {
-                current = list;
+                this.list = list;
             }
         }
-        public Node<E> getCurrent() {
-            return current;
+        public Node<E> getList() {
+            return list;
         }
         E getValue() {
-            return current.value;
+            return list.value;
         }
-        public Node<E> getNext() {
-            return current=current.next;
+
+        public Node<E> getNextNode() {
+            return list = list.next;
         }
     }
 }
