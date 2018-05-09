@@ -54,9 +54,10 @@ import java.util.function.BiFunction;
                 if (newValue != null)
                     put(key, newValue);
             } else {
-                if (newValue != null)
+                if (newValue != null) {
+                    dim++;
                     put(key, newValue);
-                else
+                }else
                     return null;
             }
             return newValue;
@@ -67,12 +68,37 @@ import java.util.function.BiFunction;
         private Set<Entry<K,V>> entrySet = new AbstractSet<Entry<K, V>>() {
             @Override
             public Iterator<Entry<K, V>> iterator() {
-                //TODO
-                return null;
+                return new Iterator<Entry<K, V>>() {
+
+                    private  Node<K,V> iter = first;
+                    private  Node<K,V> curr = null;
+
+                    @Override
+                    public boolean hasNext() {
+                        if(curr!=null)
+                            return true;
+
+                        if (iter!=null){
+                            curr=iter;
+                            iter=iter.nextIter;
+                            return true;
+                        }
+                        return false;
+
+                    }
+
+                    @Override
+                    public Entry<K, V> next() {
+                        if(!hasNext()) throw new NoSuchElementException();
+                        Node<K,V> auc = curr;
+                        curr=null;
+                        return auc;
+                    }
+                };
             }
             @Override
             public int size() {
-                return 0;
+                return dim;
             }
             /* Métodos que têm que ser redefinidos OBRIGATORIAMENTE no SET
              * embora tenham herdado uma implementação de AbstractSet
@@ -105,9 +131,13 @@ import java.util.function.BiFunction;
         }
 
         @Override
-        public boolean containsKey(Object key) {//TODO
-            // Substituir para fazer O(1)
-            return super.containsKey( key);
+        public boolean containsKey(Object key) {
+            Node<K,V> e=search(key);
+            while (e!=null){
+                if(e.getKey()==key) return true;
+                e=e.next;
+            }
+            return false;
         }
 
         @Override
