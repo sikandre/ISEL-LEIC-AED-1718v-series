@@ -31,6 +31,9 @@ import java.util.function.BiFunction;
         private final float loadFactor;
         private Node<K, V>[] table;
         private int dim;
+        private Node <K,V>firstIter;
+        private Node <K,V>lastIter;
+
 
         //<< Construtores >>
         public LinkedHashMap(int initialCapacity, float lf) {
@@ -60,15 +63,53 @@ import java.util.function.BiFunction;
             V newValue = remappingFunction.apply(key, oldValue);
             if (oldValue != null) {
                 if (newValue != null)
-                    put(key, newValue);
+                    putI(key, newValue);
             } else {
                 if (newValue != null) {
-                    dim++;
-                    put(key, newValue);
+                    putI(key, newValue);
                 } else
                     return null;
             }
             return newValue;
+        }
+
+
+        private void putI(K key, V newValue) {
+            int hash=index(key);
+            Node<K,V> novo = new Node<>(key,newValue,hash,null);
+            if(table[hash]==null)
+                table[hash] = novo;
+            else{
+                Node<K,V> current = table[hash];
+                while (current!=null){
+                    if(current.getKey().equals(key)){
+                        current.setValue(newValue);
+                        return;
+                    }
+                    current=current.next;
+                }
+                novo.next= table[hash];
+                table[hash]=novo;
+
+            }
+            nElements++;
+            LinkedNode(novo);
+        }
+
+        private void LinkedNode(Node<K, V> novo) {
+            if(firstIter==null){
+                firstIter=novo;
+                lastIter=novo;
+            }
+            else{
+                lastIter.nextIter=novo;
+                lastIter=novo;
+            }
+        }
+
+        private int index(K key) {
+            int i = key.hashCode()%dim;
+            return (i<0) ? i+dim : i;
         }
 
         @Override
@@ -110,7 +151,7 @@ import java.util.function.BiFunction;
 
             @Override
             public int size() {
-                return dim;
+                return nElements;
             }
 
             /* Métodos que têm que ser redefinidos OBRIGATORIAMENTE no SET
@@ -168,7 +209,7 @@ import java.util.function.BiFunction;
         }
 
         private Node<K, V> search(Object o) {
-            int idx =  o.hashCode()%dim;
+            int idx =  (o.hashCode()%dim<0) ? (o.hashCode()%dim)+dim : o.hashCode()%dim;
             Node<K,V> current = table[idx];
             while (current!=null) {
                 if (current.equals(o))
@@ -232,21 +273,23 @@ import java.util.function.BiFunction;
                 System.out.println("\nThe size of the LinkedHashMap is : " + linkedHashMap.size());*/
 
 
-                //using Java.Util
                 MyFile myFile = new MyFile(args[0]);
                 LinkedHashMap linkedHashMap = new LinkedHashMap();
                 while (myFile.getNewLine() != null) {
                     String nWord[] = myFile.line.split(" ");
-                    int val = 1;
                     for (int i = 0; i < nWord.length; i++) {
-                        /*if (linkedHashMap.containsKey(nWord[i]))
-                            val += (int) linkedHashMap.get(nWord[i]);
-                        int finalVal = val;*/
                         linkedHashMap.compute(nWord [i],(k,v) -> (v == null) ? 1 : (int)v+1);
+                    }
+                }
+                System.out.println(" size of the map is: " + linkedHashMap.size());
+                    Node  n = linkedHashMap.firstIter;
+                    while (n!=null) {
+                        System.out.println(n.getKey());
+                        n=n.nextIter;
                     }
                 }
             }
 
         }
-    }
+
 
