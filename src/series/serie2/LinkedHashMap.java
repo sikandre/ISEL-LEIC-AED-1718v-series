@@ -205,14 +205,8 @@ public class LinkedHashMap<K,V> extends AbstractMap<K, V> {
     @Override
     public void clear() {//precorrer todos e substituir por um null
         // Substituir para fazer uma implementação mais eficiente
-        Node<K, V> aux = table[0];
-        while (aux != null) {
-            while (aux != null) {
-                aux = null;
-                aux = aux.nextIter;
-            }
-            aux = aux.next;
-        }
+        for (int i = 0; i < dim; i++)
+            table[i]=null;
     }
 
     private Node<K, V> search(Object o) {
