@@ -1,6 +1,8 @@
 package series.serie2;
 
 
+import org.apache.commons.lang3.time.StopWatch;
+
 import java.io.*;
 import java.util.*;
 import java.util.function.BiFunction;
@@ -8,13 +10,13 @@ import java.util.function.BiFunction;
 public class LinkedHashMap<K,V> extends AbstractMap<K, V> {
     private static final int DEFAULT_CAPACITY = 11;
     private static final float DEFAULT_LOAD_FACTOR = 0.75F;
-    private Node<K, V> first;
-    private Node<K, V> current;
+
 
     private static class Node<K, V> extends AbstractMap.SimpleEntry<K, V> {
         private final int hc;
-        private Node<K, V> next;//next hasmap
+        private Node<K, V> next;
         private Node<K, V> nextIter;
+
 
         private Node(K key, V value, int hc, Node<K, V> next) {
             super(key, value);
@@ -29,7 +31,6 @@ public class LinkedHashMap<K,V> extends AbstractMap<K, V> {
     private int dim;
     private Node<K, V> firstIter;
     private Node<K, V> lastIter;
-
 
     //<< Construtores >>
     public LinkedHashMap(int initialCapacity, float lf) {
@@ -93,8 +94,10 @@ public class LinkedHashMap<K,V> extends AbstractMap<K, V> {
     }
 
     private void resizing() {
-        Node<K, V>[] newTable = (Node<K, V>[]) new Node[dim * 2];
-        for (int i = 0; i < dim; i++) {
+        int oldDim = dim;
+        dim *=2;
+        Node<K, V>[] newTable = (Node<K, V>[]) new Node[dim];
+        for (int i = 0; i < oldDim; i++) {
             Node<K, V> current = table[i];
             while (current != null) {
                 K key = current.getKey();
@@ -106,7 +109,6 @@ public class LinkedHashMap<K,V> extends AbstractMap<K, V> {
             }
         }
         table = newTable;
-        dim *= 2;
     }
 
     private void LinkedNode(Node<K, V> novo) {
@@ -128,29 +130,24 @@ public class LinkedHashMap<K,V> extends AbstractMap<K, V> {
     public Set<Entry<K, V>> entrySet() {
         return entrySet;
     }
-
     private Set<Entry<K, V>> entrySet = new AbstractSet<Entry<K, V>>() {
         @Override
         public Iterator<Entry<K, V>> iterator() {
             return new Iterator<Entry<K, V>>() {
-
-                private Node<K, V> iter = first;
+                private Node<K, V> iter = firstIter;
                 private Node<K, V> curr = null;
 
                 @Override
                 public boolean hasNext() {
                     if (curr != null)
                         return true;
-
                     if (iter != null) {
                         curr = iter;
                         iter = iter.nextIter;
                         return true;
                     }
                     return false;
-
                 }
-
                 @Override
                 public Entry<K, V> next() {
                     if (!hasNext()) throw new NoSuchElementException();
@@ -177,8 +174,6 @@ public class LinkedHashMap<K,V> extends AbstractMap<K, V> {
                 n = n.next;
             }
             return false;
-            // Substituir para fazer O(1)
-            //return super.contains( o ); // O(n)
         }
 
         @Override
@@ -194,7 +189,6 @@ public class LinkedHashMap<K,V> extends AbstractMap<K, V> {
     @Override
     public V get(Object o) {
         Node<K, V> e = search(o);
-
         return (e == null) ? null : e.getValue();
     }
 
@@ -233,22 +227,6 @@ public class LinkedHashMap<K,V> extends AbstractMap<K, V> {
         return null;
     }
 
-    //Analisar os métodos
-    @Override
-    public Set<K> keySet() {
-        // Só implementar se conseguirem diminuir a complexidade dos métodos
-        // caso contrário, remover este Override
-        //nao conseguimos porque ja esta a ser utilizado o iterador de entrySet
-        return super.keySet();
-    }
-
-    @Override
-    public Collection<V> values() {
-        // Só implementar se conseguirem diminuir a complexidade dos métodos
-        // caso contrário, remover este Override
-        return super.values();
-    }
-
     public V remove(Object k) {
         throw new UnsupportedOperationException();
     }
@@ -275,7 +253,6 @@ public class LinkedHashMap<K,V> extends AbstractMap<K, V> {
 
 
     public static void main(String[] args) throws IOException {
-
                 /*//using Java.Util
                 MyFile myFile = new MyFile(args[0]);
                 java.util.LinkedHashMap linkedHashMap = new java.util.LinkedHashMap();
@@ -286,8 +263,10 @@ public class LinkedHashMap<K,V> extends AbstractMap<K, V> {
                     }
                 }
                 System.out.println("Contents of LinkedHashMap : " + linkedHashMap);
-                System.out.println("\nThe size of the LinkedHashMap is : " + linkedHashMap.size());*/
+                System.out.println("The size of the LinkedHashMap is : " + linkedHashMap.size());*/
 
+        StopWatch time = new StopWatch();
+        time.start();
 
         MyFile myFile = new MyFile(args[0]);
         LinkedHashMap linkedHashMap = new LinkedHashMap();
@@ -297,24 +276,44 @@ public class LinkedHashMap<K,V> extends AbstractMap<K, V> {
                 linkedHashMap.compute(nWord[i], (k, v) -> (v == null) ? 1 : (int) v + 1);
             }
         }
+        writeFile(linkedHashMap);
+        time.stop();
+        memTest();
+        System.out.println("Total Time = "+ time.getTime());
+        System.out.println("Size of the map is: " + linkedHashMap.size());
 
-        System.out.println(" size of the map is: " + linkedHashMap.size());
+
+    }
+
+    private static void memTest() {
+        int size = 1024*1024;
+        Runtime runtime = Runtime.getRuntime();
+        System.out.println("Heap function stats in Mb");
+        System.out.println("Used Memory: "+ (runtime.totalMemory() - runtime.freeMemory()) / size);
+        System.out.println("Free memory: "+runtime.freeMemory()/size);
+        System.out.println("Total available Memory: "+runtime.totalMemory()/size);
+        System.out.println("Max available Memory: "+runtime.maxMemory()/size);
     }
 
     private static <K, V> void writeFile(LinkedHashMap<K, V> lhm) throws IOException {
+        StopWatch timer = new StopWatch();
+
+        final int singleValue = 1;
+        timer.start();
         FileWriter fileWriter = new FileWriter("res.txt");
         BufferedWriter bw = new BufferedWriter(fileWriter);
         Node<K, V> n = lhm.firstIter;
         while (n != null) {
-            V val = n.getValue();
-            if (val.equals(1)) {
+            int val = (Integer) n.getValue();
+            if (val==singleValue) {
                 bw.write((String) n.getKey());
                 bw.newLine();
             }
             n = n.nextIter;
         }
         bw.close();
-
+        timer.stop();
+        System.out.println("timer do iterator and write to file " +timer.getTime());
     }
 
 }
