@@ -93,4 +93,33 @@ public class Iterables {
         };
     }
 
+    public static Iterable<String> getWordsThatContains(Iterable<Iterable<String>> src, String subStr){
+        return new Iterable<String>() {
+            @Override
+            public Iterator<String> iterator() {
+                return new Iterator<String>() {
+                    Iterator<Iterable<String>> it = src.iterator();
+                    Iterator subIt = null;
+                    String current = null;
+
+                    @Override
+                    public boolean hasNext() {
+                        if(current!=null) return true;
+                        subIt = it.next().iterator();
+                        if(subIt!=null)
+                            while (subIt.hasNext())
+                                
+
+                        return false;
+                    }
+
+                    @Override
+                    public String next() {
+                        return null;
+                    }
+                }
+            }
+        }
+    }
+
 }
