@@ -1,9 +1,7 @@
 package series.serie3;
 
-import java.util.Comparator;
-import java.util.Iterator;
-import java.util.NoSuchElementException;
-
+import java.util.*;
+import java.util.function.Predicate;
 
 
 public class Iterables {
@@ -99,27 +97,49 @@ public class Iterables {
             public Iterator<String> iterator() {
                 return new Iterator<String>() {
                     Iterator<Iterable<String>> it = src.iterator();
-                    Iterator subIt = null;
+                    Iterator<String> subIt = it.next().iterator();
                     String current = null;
+                    Predicate<String> predicate = new Predicate<String>() {
+                        @Override
+                        public boolean test(String s) {
+                            return s.toLowerCase().contains(subStr.toLowerCase());
+                        }
+                    };
 
                     @Override
                     public boolean hasNext() {
                         if(current!=null) return true;
-                        subIt = it.next().iterator();
-                        if(subIt!=null)
-                            while (subIt.hasNext())
-                                
 
+                        while (it.hasNext() || subIt.hasNext()) {
+                            String aux = subIt.next();
+                            if(predicate.test(aux.toLowerCase())) {
+                                System.out.println(aux);
+                                current = aux;
+                                return true;
+                            }
+                        }
                         return false;
                     }
 
                     @Override
                     public String next() {
-                        return null;
+                        if(!hasNext())throw new NoSuchElementException();
+                        String  aux=current;
+                        current=null;
+                        if(!subIt.hasNext() && it.hasNext())
+                            subIt = it.next().iterator();
+                        return aux;
                     }
-                }
+                };
             }
-        }
+        };
+    }
+
+    public static void main(String[] args) {
+        Iterable<Iterable<String>> src = new ArrayList<>();
+        ((ArrayList<Iterable<String>>) src).add(Arrays.asList("O","rato","roeu","a","rolha","da","garrafa","do","rei","da","Russia"));
+        ((ArrayList<Iterable<String>>) src).add(Arrays.asList("O","rato","roeu","a","rolha","da","garrafa","do","rei","da","Russia"));
+        getWordsThatContains(src,"eu");
     }
 
 }
