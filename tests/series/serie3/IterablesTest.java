@@ -52,5 +52,5 @@ public class IterablesTest {
         Assertions.assertIterableEquals(res,getWordsThatContains(src," "));
     }
 
-    
+
 }
