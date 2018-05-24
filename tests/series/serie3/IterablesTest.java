@@ -30,7 +30,6 @@ public class IterablesTest {
     @Test
     public void getWordsThatContains1(){
         Iterable<Iterable<String>> src = new ArrayList<>();
-
         ((ArrayList<Iterable<String>>) src).add(Arrays.asList("O","rato","roeu","a","rolha","da","garrafa","do","rei","da","Russia"));
         ((ArrayList<Iterable<String>>) src).add(Arrays.asList("O","original","nunca","se","desoriginou","nem","nunca","se","desoriginalizara"));
         ((ArrayList<Iterable<String>>) src).add(Arrays.asList("Tres","pratos","de","trigo","para","tres","tristes","tigres"));
@@ -40,4 +39,18 @@ public class IterablesTest {
 
         Assertions.assertIterableEquals(res,getWordsThatContains(src,"r"));
     }
+    @Test
+    public void getWordsThatContains2(){
+        Iterable<Iterable<String>> src = new ArrayList<>();
+        ((ArrayList<Iterable<String>>) src).add(Arrays.asList());
+        ((ArrayList<Iterable<String>>) src).add(Arrays.asList());
+        ((ArrayList<Iterable<String>>) src).add(Arrays.asList());
+
+
+        ArrayList<String> res = new ArrayList<>(Arrays.asList());
+
+        Assertions.assertIterableEquals(res,getWordsThatContains(src," "));
+    }
+
+    
 }

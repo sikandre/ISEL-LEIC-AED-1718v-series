@@ -97,8 +97,9 @@ public class Iterables {
             public Iterator<String> iterator() {
                 return new Iterator<String>() {
                     Iterator<Iterable<String>> it = src.iterator();
-                    Iterator<String> subIt = it.next().iterator();
+                    Iterator<String> subIt;
                     String current = null;
+
                     Predicate<String> predicate = new Predicate<String>() {
                         @Override
                         public boolean test(String s) {
@@ -108,7 +109,7 @@ public class Iterables {
 
                     @Override
                     public boolean hasNext() {
-                        if(current!=null) return true;
+                        /*if(current!=null) return true;
 
                         while (it.hasNext() || subIt.hasNext()) {
                             String aux = subIt.next();
@@ -119,15 +120,30 @@ public class Iterables {
                             }
                         }
                         return false;
+                        */
+                        while(current==null){
+                            if(subIt!=null && subIt.hasNext()) {
+                                String aux = subIt.next();
+                                if(predicate.test(aux))
+                                    current = aux;
+                            }
+                            else{
+                                if(it.hasNext()){
+                                    subIt=it.next().iterator();
+                                }
+                                else
+                                    return false;
+                            }
+                        }
+                        return true;
                     }
+
 
                     @Override
                     public String next() {
                         if(!hasNext())throw new NoSuchElementException();
                         String  aux=current;
                         current=null;
-                        if(!subIt.hasNext() && it.hasNext())
-                            subIt = it.next().iterator();
                         return aux;
                     }
                 };
@@ -135,11 +151,5 @@ public class Iterables {
         };
     }
 
-    public static void main(String[] args) {
-        Iterable<Iterable<String>> src = new ArrayList<>();
-        ((ArrayList<Iterable<String>>) src).add(Arrays.asList("O","rato","roeu","a","rolha","da","garrafa","do","rei","da","Russia"));
-        ((ArrayList<Iterable<String>>) src).add(Arrays.asList("O","rato","roeu","a","rolha","da","garrafa","do","rei","da","Russia"));
-        getWordsThatContains(src,"eu");
-    }
 
 }
