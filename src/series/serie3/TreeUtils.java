@@ -66,5 +66,18 @@ public class TreeUtils {
         };
     }
 
+    public static <E> boolean isBalanced(Node<E> root){
+        int l =  depth(root.left);
+        int r = depth(root.right);
+        return r==l;
+    }
+
+    private static <E> int depth(Node<E> root) {
+        if(root==null) return -1;
+        int l = depth(root.left);
+        int r = depth(root.right);
+        return Math.max(l,r)+1;
+    }
+
 
 }

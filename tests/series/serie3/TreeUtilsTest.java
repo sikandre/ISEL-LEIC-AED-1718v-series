@@ -7,14 +7,14 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.function.Predicate;
 
-import static series.serie3.TreeUtils.getByDecreasingOrder;
-import static series.serie3.TreeUtils.sumIf;
+import static series.serie3.TreeUtils.*;
 
 public class TreeUtilsTest {
-    private static BST<Integer> bst = new BST<>();
 
     @Test
     public void sumIf1(){
+        BST<Integer> bst = new BST<>();
+
         treeInsert(bst, 60);
         treeInsert(bst, 50);
         treeInsert(bst, 70);
@@ -33,6 +33,8 @@ public class TreeUtilsTest {
     }
     @Test
     public void  getByDecreasingOrder1(){
+        BST<Integer> bst = new BST<>();
+
         treeInsert(bst, 60);
         treeInsert(bst, 50);
         treeInsert(bst, 70);
@@ -45,6 +47,40 @@ public class TreeUtilsTest {
 
         Assertions.assertIterableEquals(res, getByDecreasingOrder(bst.root));
     }
+    @Test
+    public void  isBalanced1(){
+        BST<Integer> bst = new BST<>();
+
+        treeInsert(bst, 60);
+        treeInsert(bst, 50);
+        treeInsert(bst, 70);
+        treeInsert(bst, 20);
+        treeInsert(bst, 55);
+        treeInsert(bst, 65);
+        treeInsert(bst, 80);
+
+        ArrayList<Integer> res = new ArrayList<Integer>(Arrays.asList(80,70,65,60,55,50,20));
+        Assertions.assertEquals(true, isBalanced(bst.root));
+    }
+
+    @Test
+    public void  isBalanced2(){
+        BST<Integer> bst = new BST<>();
+
+        treeInsert(bst, 60);
+        treeInsert(bst, 50);
+        treeInsert(bst, 70);
+        treeInsert(bst, 20);
+        treeInsert(bst, 55);
+        treeInsert(bst, 65);
+        treeInsert(bst, 80);
+        treeInsert(bst, 85);
+
+
+        ArrayList<Integer> res = new ArrayList<Integer>(Arrays.asList(80,70,65,60,55,50,20));
+        Assertions.assertEquals(false, isBalanced(bst.root));
+    }
+
 
     private void treeInsert(BST<Integer> bst, int z) {
         Node<Integer> curr = new Node<>(z);
