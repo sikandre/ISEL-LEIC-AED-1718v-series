@@ -28,6 +28,7 @@ public class DNACustomCollection {
 
         DNANode curr = root;
 
+        //check before
         if(!isValid(fragment)) {
             System.out.println(fragment + "  Is not a valid DNA fragment");
             return;

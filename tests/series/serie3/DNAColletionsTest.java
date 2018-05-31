@@ -17,6 +17,7 @@ public class DNAColletionsTest {
         for (i = 0; i < keys.length; i++)
             add(keys[i]);
 
-        System.out.println(prefixCount("c"));
+        System.out.println(prefixCount("c")); // res=0
+        
     }
 }
