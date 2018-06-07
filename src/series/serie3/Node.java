@@ -4,6 +4,8 @@ public class Node<E> {
     E value;
     Node<E> left;
     Node<E> right;
+    Node<E> parent;
+
 
     public Node(){
     }
