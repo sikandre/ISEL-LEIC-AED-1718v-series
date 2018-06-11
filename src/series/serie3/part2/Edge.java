@@ -8,8 +8,12 @@ public class Edge<E> {
 
     public Edge(E next, String t) {
         String [] aux = StringUtils.split(t," :");
-        int res = Integer.parseInt(aux[0]);
-        res+= Integer.parseInt(aux[1]);
+        time = Integer.parseInt(aux[0])*60;
+        time+= Integer.parseInt(aux[1]);
         this.next = next;
+    }
+
+    public E getNext() {
+        return next;
     }
 }

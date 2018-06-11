@@ -17,7 +17,7 @@ public class LineStation {
 
     public void setMedianTime(String time) {
         String [] aux = StringUtils.split(time,":");
-        medianTime = Integer.parseInt(aux[0]);
+        medianTime = Integer.parseInt(aux[0])*60;
         medianTime+= Integer.parseInt(aux[1]);
     }
 

@@ -5,9 +5,12 @@ import org.apache.commons.lang3.StringUtils;
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
-import java.util.HashMap;
+import java.nio.file.LinkOption;
+import java.util.*;
 
 public class SubwayTrip {
+    static StationGraph stationGraph;
+    private static LinkedList<Station> visited;
 
 
     public static void main(String[] args) throws IOException {
@@ -18,18 +21,95 @@ public class SubwayTrip {
 
         setStations(stationsMap, bufferedReader, size);
 
+
+
+
         bufferedReader = new BufferedReader(new FileReader(args[0]));
         size = Integer.parseInt(bufferedReader.readLine());
         HashMap<String, LineStation> linesMap = new HashMap();
 
         setLines(linesMap, bufferedReader, size);
 
+        stationGraph = new StationGraph(stationsMap);
 
 
+        /*get shortest path*/
+        Station a = stationGraph.getStationHashMap().get("Reboleira");
+        Station b = stationGraph.getStationHashMap().get("Alameda");
+
+
+        /*List<Station> paths = allPaths(a,b);
+        for (Station s:paths) {
+            System.out.println(s);
+        }*/
+        LinkedList <Station> path2 = new LinkedList<>();
+        visited = new LinkedList<>();
+
+        depthFirst(a,b);
 
 
 
     }
+
+    private static void depthFirst(Station a, Station b) {
+        if(visited.size()==0)
+            visited.add(a);
+        LinkedList<Edge> edges = stationGraph.getStation(visited.getLast());
+        for (Edge edge : edges) {
+            if(visited.contains(edge.next))
+                continue;
+            if(edge.next.equals(b)){
+                visited.add((Station) edge.next);
+                printPath(visited);
+                visited.removeLast();
+                break;
+            }
+        }
+        for (Edge edge : edges) {
+            if(visited.contains(edge.next)||edge.next.equals(b))
+                continue;
+            visited.addLast((Station) edge.next);
+            depthFirst((Station) edge.next, b);
+            visited.removeLast();
+        }
+
+
+
+    }
+
+    private static void printPath(LinkedList<Station> visited) {
+        for (Station station : visited)
+            System.out.println(station+" ");
+        System.out.println();
+    }
+
+    /*teste 1*/
+    private static List<Station> allPaths(Station a, Station b) {
+        List <Station> res = new ArrayList<>();
+        Queue<Station> queue = new LinkedList<>();
+        ((LinkedList<Station>) queue).add(a);
+        res.add(a);
+        a.setVisited(true);
+        while (queue!=null){
+            a = queue.poll();
+            Iterator<Edge> edgeIterator = a.getNextStation().listIterator();
+            while (edgeIterator.hasNext()){
+                Edge tmp = edgeIterator.next();
+                Station s = (Station) tmp.getNext();
+                if(s.equals(b))
+                    return res;
+                if(!s.isVisited()){
+                    s.setVisited(true);
+                    ((LinkedList<Station>) queue).add(s);
+                    res.add(s);
+                }
+            }
+        }
+        return null;
+    }
+
+
+
 
     private static void setLines(HashMap<String, LineStation> lineMap, BufferedReader bufferedReader, int size) throws IOException {
         for (int i = 0; i < size; i++) {
