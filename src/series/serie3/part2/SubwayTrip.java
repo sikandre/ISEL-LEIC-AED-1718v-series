@@ -5,28 +5,27 @@ import org.apache.commons.lang3.StringUtils;
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
-import java.nio.file.LinkOption;
 import java.util.*;
 
 public class SubwayTrip {
     static StationGraph stationGraph;
     private static LinkedList<Station> visited;
+    private static LinkedList<Station> minStations;
+    private static HashMap<String, Station> stationsMap;
+    private static HashMap<String, LineStation> linesMap;
 
 
     public static void main(String[] args) throws IOException {
 
         BufferedReader bufferedReader = new BufferedReader(new FileReader(args[1]));
         int size = Integer.parseInt(bufferedReader.readLine());
-        HashMap<String, Station> stationsMap = new HashMap();
+        stationsMap = new HashMap();
 
         setStations(stationsMap, bufferedReader, size);
 
-
-
-
         bufferedReader = new BufferedReader(new FileReader(args[0]));
         size = Integer.parseInt(bufferedReader.readLine());
-        HashMap<String, LineStation> linesMap = new HashMap();
+        linesMap = new HashMap();
 
         setLines(linesMap, bufferedReader, size);
 
@@ -35,20 +34,142 @@ public class SubwayTrip {
 
         /*get shortest path*/
         Station a = stationGraph.getStationHashMap().get("Reboleira");
-        Station b = stationGraph.getStationHashMap().get("Alameda");
+        Station b = stationGraph.getStationHashMap().get("Telheiras");
 
 
-        /*List<Station> paths = allPaths(a,b);
+        List<Station> paths = allPaths(a,b);
         for (Station s:paths) {
             System.out.println(s);
-        }*/
+        }
         LinkedList <Station> path2 = new LinkedList<>();
         visited = new LinkedList<>();
 
         depthFirst(a,b);
 
+        minStations = new LinkedList<>();
+        LinkedList<Station> fast = fastestPath(a,b);
+        for (int i = fast.size()-1; i >= 0 ; i--) {
+            System.out.println(fast.get(i));
+
+        }
+    }
+
+    private static LinkedList<Station> fastestPath(Station a, Station b) {
+        int time=0;
+        initSource(a);
+        Queue<Station> queue = new LinkedList<>();
+        LinkedList<Edge> closeTo = a.getNextStation();
+        for (Edge e : closeTo) {
+            Station s = (Station) e.value;
+            s.setPredecessur(a);
+            if(a.getBelongTO().length == s.getBelongTO().length) {   //same line
+                LineStation ls = linesMap.get(a.getBelongTO()[0].getLineName());
+                s.setDistance(ls.getMedianTime()+e.getTime());
+            }
+
+            else{
+                LineStation ls = (a.getBelongTO()[0]!=s.getBelongTO()[0]) ? a.getBelongTO()[0] : a.getBelongTO()[1];
+                ls = linesMap.get(ls.getLineName());
+                s.setDistance(ls.getMedianTime()+e.getTime());
+            }
+            s.setPredecessur(a);
+            ((LinkedList<Station>) queue).add(s);
+        }
+        while (queue!=null){
+            Station min = deQueue(queue);
+            if(min.getStationName().equals(b.getStationName())){
+                LinkedList<Station> res = new LinkedList<>();
+                while (min.getPredecessur()!=null){
+                    res.add(min);
+                    min=min.getPredecessur();
+                }
+                return res;
+            }
+            for (Edge v : min.getNextStation() ) {
+                Station prox = (Station) v.value;
+                if(prox.getDistance()==Integer.MAX_VALUE){
+
+                    time=min.getDistance();
+                    boolean sameLine=false;
+                    for (int i = 0; i < min.getPredecessur().getBelongTO().length; i++) {
+                        for (int j = 0; j < prox.getBelongTO().length; j++) {
+                            if(min.getPredecessur().getBelongTO()[i].getLineName().equals(prox.getBelongTO()[j].getLineName())) {
+                                sameLine = true;
+                                time+=v.getTime();
+                                prox.setDistance(time);
+                                prox.setPredecessur(min);
+                                ((LinkedList<Station>) queue).add(prox);
+                                break;
+                            }
+                        }
+                    }
+                    String commonLine;
+                    if(!sameLine) {
+                        for (int i = 0; i < prox.getBelongTO().length; i++) {
+                            for (int j = 0; j < min.getBelongTO().length; j++) {
+                                if (prox.getBelongTO()[i].getLineName().equals(min.getBelongTO()[j].getLineName())) {
+                                    commonLine = min.getBelongTO()[j].getLineName();
+                                    LineStation ls = linesMap.get(commonLine);
+                                    LinkedList<Edge> lsEgde = ls.getNextLine();
+                                    String currentLine = getCurrentLine(min.getPredecessur(), min);
+                                    for (Edge l : lsEgde) {
+                                        LineStation tmp = (LineStation) l.value;
+                                        if(tmp.getLineName().equals(currentLine)) {
+                                            time += ls.getMedianTime();
+                                            time += l.getTime();
+                                            time += v.getTime();
+                                            prox.setDistance(time);
+                                            prox.setPredecessur(min);
+                                            ((LinkedList<Station>) queue).add(prox);
+                                        }
+
+                                    }
+
+                                }
+                            }
+                        }
+                    }
+                }
+                //relax(min, prox, v);
+            }
+
+        }
+        return null;
+    }
+
+    private static void relax(Station min, Station prox, Edge v) {
+        if(prox.getDistance()>min.getDistance()+v.getTime()) {
+            prox.setDistance(min.getDistance() + v.getTime());
+            prox.setPredecessur(min);
+        }
+    }
 
 
+    private static String getCurrentLine(Station predecessur, Station curr) {
+        for (int i = 0; i < predecessur.getBelongTO().length; i++) {
+            for (int j = 0; j < curr.getBelongTO().length; j++) {
+                if(predecessur.getBelongTO()[i].getLineName().equals(curr.getBelongTO()[j].getLineName()))
+                    return predecessur.getBelongTO()[i].getLineName();
+            }
+        }
+        return null;
+    }
+
+    private static Station deQueue(Queue<Station> queue) {
+        Station min = null;
+        for (int i = 0; i < queue.size(); i++) {
+            Station last = ((LinkedList<Station>) queue).get(i);
+            if (min == null)
+                min = last;
+            if (min.getDistance() >= last.getDistance())
+                min = last;
+        }
+        queue.remove(min);
+        return min;
+    }
+
+    private static void initSource(Station a) {
+        a.setDistance(0);
     }
 
     private static void depthFirst(Station a, Station b) {
@@ -56,25 +177,22 @@ public class SubwayTrip {
             visited.add(a);
         LinkedList<Edge> edges = stationGraph.getStation(visited.getLast());
         for (Edge edge : edges) {
-            if(visited.contains(edge.next))
+            if(visited.contains(edge.value))
                 continue;
-            if(edge.next.equals(b)){
-                visited.add((Station) edge.next);
+            if(edge.value.equals(b)){
+                visited.add((Station) edge.value);
                 printPath(visited);
                 visited.removeLast();
                 break;
             }
         }
         for (Edge edge : edges) {
-            if(visited.contains(edge.next)||edge.next.equals(b))
+            if(visited.contains(edge.value)||edge.value.equals(b))
                 continue;
-            visited.addLast((Station) edge.next);
-            depthFirst((Station) edge.next, b);
+            visited.addLast((Station) edge.value);
+            depthFirst((Station) edge.value, b);
             visited.removeLast();
         }
-
-
-
     }
 
     private static void printPath(LinkedList<Station> visited) {
@@ -95,7 +213,7 @@ public class SubwayTrip {
             Iterator<Edge> edgeIterator = a.getNextStation().listIterator();
             while (edgeIterator.hasNext()){
                 Edge tmp = edgeIterator.next();
-                Station s = (Station) tmp.getNext();
+                Station s = (Station) tmp.getValue();
                 if(s.equals(b))
                     return res;
                 if(!s.isVisited()){

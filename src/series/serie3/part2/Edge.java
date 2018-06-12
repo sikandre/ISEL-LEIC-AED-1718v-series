@@ -4,16 +4,20 @@ import org.apache.commons.lang3.StringUtils;
 
 public class Edge<E> {
     private int time;
-    E next;
+    E value;
 
-    public Edge(E next, String t) {
+    public Edge(E value, String t) {
         String [] aux = StringUtils.split(t," :");
         time = Integer.parseInt(aux[0])*60;
         time+= Integer.parseInt(aux[1]);
-        this.next = next;
+        this.value = value;
     }
 
-    public E getNext() {
-        return next;
+    public E getValue() {
+        return value;
+    }
+
+    public int getTime() {
+        return time;
     }
 }

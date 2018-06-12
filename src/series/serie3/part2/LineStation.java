@@ -24,4 +24,16 @@ public class LineStation {
     public void setNextLine(LineStation lineStation, String time) {
         nextLine.add(new Edge(lineStation, time));
     }
+
+    public int getMedianTime() {
+        return medianTime;
+    }
+
+    public String getLineName() {
+        return lineName;
+    }
+
+    public LinkedList<Edge> getNextLine() {
+        return nextLine;
+    }
 }

@@ -7,7 +7,8 @@ public class Station {
     private LineStation[] belongTO;
     private LinkedList<Edge> nextStation;
     private boolean isVisited;
-    private int d = Integer.MAX_VALUE;
+    private int distance = Integer.MAX_VALUE;
+    private Station predecessur;
 
 
     Station(String name){
@@ -47,7 +48,25 @@ public class Station {
                 '}';
     }
 
+    public void setDistance(int distance) {
+        this.distance = distance;
+    }
+
+    public int getDistance() {
+        return distance;
+    }
+
+    public void setPredecessur(Station predecessur) {
+        this.predecessur = predecessur;
+    }
+
+    public Station getPredecessur() {
+        return predecessur;
+    }
+
     public String getStationName() {
         return stationName;
+
+
     }
 }
