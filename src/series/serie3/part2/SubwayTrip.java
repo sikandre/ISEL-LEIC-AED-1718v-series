@@ -10,9 +10,11 @@ import java.util.*;
 public class SubwayTrip {
     static StationGraph stationGraph;
     private static LinkedList<Station> visited;
-    private static LinkedList<Station> minStations;
     private static HashMap<String, Station> stationsMap;
     private static HashMap<String, LineStation> linesMap;
+    private static int count;
+    private static LinkedList<Station> lessPath;
+    private static boolean printAll = true;
 
 
     public static void main(String[] args) throws IOException {
@@ -28,33 +30,51 @@ public class SubwayTrip {
         linesMap = new HashMap();
 
         setLines(linesMap, bufferedReader, size);
-
         stationGraph = new StationGraph(stationsMap);
 
 
-        /*get shortest path*/
+        /*select stations path*/
         Station a = stationGraph.getStationHashMap().get("Reboleira");
-        Station b = stationGraph.getStationHashMap().get("Telheiras");
+        Station b = stationGraph.getStationHashMap().get("Alvalade");
 
+        /*All Path*/
+        allPaths(a, b);
 
-        List<Station> paths = allPaths(a,b);
-        for (Station s:paths) {
-            System.out.println(s);
-        }
-        LinkedList <Station> path2 = new LinkedList<>();
-        visited = new LinkedList<>();
+        /*Fast path*/
+        fastPath(a,b);
 
-        depthFirst(a,b);
-
-        minStations = new LinkedList<>();
-        LinkedList<Station> fast = fastestPath(a,b);
-        for (int i = fast.size()-1; i >= 0 ; i--) {
-            System.out.println(fast.get(i));
-
-        }
+        /*path With Less Changes*/
+        pathWithLessChanges(a,b);
     }
 
-    private static LinkedList<Station> fastestPath(Station a, Station b) {
+    private static void pathWithLessChanges(Station a, Station b) {
+        lessPath = new LinkedList<>();
+        printAll=false;
+        count = 0;
+        depthFirst(a,b);
+        System.out.println("Path with less changes");
+        printPath(lessPath);
+    }
+
+    private static void fastPath(Station a, Station b) {
+        LinkedList<Station> fast = getFastestPath(a,b);
+        System.out.println("The fastest path");
+        for (int i = fast.size()-1; i >= 0 ; i--) {
+            System.out.println(fast.get(i));
+        }
+        System.out.println();
+    }
+
+    private static void allPaths(Station a, Station b) {
+        LinkedList <Station> path2 = new LinkedList<>();
+        visited = new LinkedList<>();
+        System.out.println("Os Caminhos possiveis são:");
+        depthFirst(a,b);
+    }
+
+
+
+    private static LinkedList<Station> getFastestPath(Station a, Station b) {
         int time=0;
         initSource(a);
         Queue<Station> queue = new LinkedList<>();
@@ -173,15 +193,20 @@ public class SubwayTrip {
     }
 
     private static void depthFirst(Station a, Station b) {
-        if(visited.size()==0)
+        if(visited.size()==0) {
             visited.add(a);
+            a.setPredecessur(null);
+        }
         LinkedList<Edge> edges = stationGraph.getStation(visited.getLast());
         for (Edge edge : edges) {
             if(visited.contains(edge.value))
                 continue;
             if(edge.value.equals(b)){
                 visited.add((Station) edge.value);
-                printPath(visited);
+                if(printAll)
+                    printPath(visited);
+                else
+                    getLessSwitch(visited);
                 visited.removeLast();
                 break;
             }
@@ -190,9 +215,36 @@ public class SubwayTrip {
             if(visited.contains(edge.value)||edge.value.equals(b))
                 continue;
             visited.addLast((Station) edge.value);
+            ((Station) edge.value).setPredecessur(a);
             depthFirst((Station) edge.value, b);
             visited.removeLast();
         }
+    }
+
+    private static void getLessSwitch(LinkedList<Station> visited) {
+        int res=0;
+        if(lessPath.size()==0)
+            lessPath= (LinkedList<Station>) visited.clone();
+        String lastStation = null;
+        String currentStation;
+        for (Station s : visited) {
+            if(s.getPredecessur()==null)
+                continue;
+            currentStation=getCurrentLine(s.getPredecessur(),s);
+            if(lastStation==null)
+                lastStation = currentStation;
+            if(!lastStation.equals(currentStation))
+                res++;
+            lastStation=currentStation;
+        }
+        if(count==0)
+            count=res;
+        if(res<=count) {
+            lessPath = (LinkedList<Station>) visited.clone();
+            count = res;
+        }
+
+
     }
 
     private static void printPath(LinkedList<Station> visited) {
@@ -200,34 +252,6 @@ public class SubwayTrip {
             System.out.println(station+" ");
         System.out.println();
     }
-
-    /*teste 1*/
-    private static List<Station> allPaths(Station a, Station b) {
-        List <Station> res = new ArrayList<>();
-        Queue<Station> queue = new LinkedList<>();
-        ((LinkedList<Station>) queue).add(a);
-        res.add(a);
-        a.setVisited(true);
-        while (queue!=null){
-            a = queue.poll();
-            Iterator<Edge> edgeIterator = a.getNextStation().listIterator();
-            while (edgeIterator.hasNext()){
-                Edge tmp = edgeIterator.next();
-                Station s = (Station) tmp.getValue();
-                if(s.equals(b))
-                    return res;
-                if(!s.isVisited()){
-                    s.setVisited(true);
-                    ((LinkedList<Station>) queue).add(s);
-                    res.add(s);
-                }
-            }
-        }
-        return null;
-    }
-
-
-
 
     private static void setLines(HashMap<String, LineStation> lineMap, BufferedReader bufferedReader, int size) throws IOException {
         for (int i = 0; i < size; i++) {
