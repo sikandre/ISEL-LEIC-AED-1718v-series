@@ -1,57 +1,86 @@
 package series.serie3.part2;
 
-import org.apache.commons.lang3.StringUtils;
-
-import java.io.BufferedReader;
-import java.io.FileReader;
 import java.io.IOException;
 import java.util.*;
 
 public class SubwayTrip {
-    static StationGraph stationGraph;
+    private static StationGraph stationGraph;
     private static LinkedList<Station> visited;
-    private static HashMap<String, Station> stationsMap;
-    private static HashMap<String, LineStation> linesMap;
     private static int count;
     private static LinkedList<Station> lessPath;
     private static boolean printAll = true;
-
+    private static final int EXIT = 0;
+    private static final String[] OPTIONS = {"allPaths", "fastestPath", "pathWithLessChanges"};
+    private static Station a,b;
 
     public static void main(String[] args) throws IOException {
 
-        BufferedReader bufferedReader = new BufferedReader(new FileReader(args[1]));
-        int size = Integer.parseInt(bufferedReader.readLine());
-        stationsMap = new HashMap();
+        stationGraph = new StationGraph(args[1]);
+        stationGraph.createLines(args[0]);
+        Scanner in = new Scanner(System.in);
 
-        setStations(stationsMap, bufferedReader, size);
+        String init;
+        String dest;
+        boolean valid;
 
-        bufferedReader = new BufferedReader(new FileReader(args[0]));
-        size = Integer.parseInt(bufferedReader.readLine());
-        linesMap = new HashMap();
+        int keyPressed = -1;
 
-        setLines(linesMap, bufferedReader, size);
-        stationGraph = new StationGraph(stationsMap);
+        while (keyPressed != EXIT) {
+            do {
+                System.out.println("Choose initial station.");
+                init = in.nextLine();
+                if (!stationGraph.getStationHashMap().containsKey(init)) {
+                    System.out.println("Invalid Name.");
+                    valid = true;
+                }
+                else {
+                    a = stationGraph.getStationHashMap().get(init);
+                    valid = false;
+                }
 
+            } while (valid);
 
+            do {
+                System.out.println("Choose destination station");
+                dest = in.nextLine();
+                if (!stationGraph.getStationHashMap().containsKey(dest)) {
+                    System.out.println("Invalid Name.");
+                    valid = true;
+                }
+                else {
+                    b = stationGraph.getStationHashMap().get(dest);
+                    valid = false;
+                }
 
+            } while (valid);
 
+            System.out.println("Choose Option or 0(zero) to exit");
+            for (int i = 0; i < OPTIONS.length; i++) {
+                System.out.println((i + 1) + " -> " + OPTIONS[i]);
+            }
+            keyPressed = in.nextInt();
+            in.nextLine();
 
-        /*select stations path*/
-        Station a = stationGraph.getStationHashMap().get("Reboleira");
-        Station b = stationGraph.getStationHashMap().get("Alvalade");
-
-        /*All Path*/
-        allPaths(a, b);
-
-        /*Fast path*/
-        fastPath(a,b);
-
-        /*path With Less Changes*/
-        pathWithLessChanges(a,b);
+            switch (keyPressed){
+                case 1: allPaths(a, b);
+                break;
+                case 2: fastPath(a, b);
+                break;
+                case 3: pathWithLessChanges(a,b);
+                break;
+                case 0: continue;
+                default:
+                    System.out.println("Not a valid option");
+                    break;
+            }
+            System.out.println("Would you like to continue? 0 to exit");
+            keyPressed = in.nextLine().charAt(0)-'0';
+        }
     }
 
     private static void pathWithLessChanges(Station a, Station b) {
         lessPath = new LinkedList<>();
+        visited = new LinkedList<>();
         printAll=false;
         count = 0;
         depthFirst(a,b);
@@ -62,6 +91,7 @@ public class SubwayTrip {
     private static void fastPath(Station a, Station b) {
         LinkedList<Station> fast = getFastestPath(a,b);
         System.out.println("The fastest path");
+        System.out.println(a);
         for (int i = fast.size()-1; i >= 0 ; i--) {
             System.out.println(fast.get(i));
         }
@@ -69,34 +99,31 @@ public class SubwayTrip {
     }
 
     private static void allPaths(Station a, Station b) {
-        LinkedList <Station> path2 = new LinkedList<>();
         visited = new LinkedList<>();
         System.out.println("Os Caminhos possiveis são:");
         depthFirst(a,b);
     }
 
-
-
-    private static LinkedList<Station> getFastestPath(Station a, Station b) {
+    private static LinkedList<Station> getFastestPath(Station src, Station b) {
         int time=0;
-        initSource(a);
+        initSource(src);
         Queue<Station> queue = new LinkedList<>();
-        LinkedList<Edge> closeTo = a.getNextStation();
+        LinkedList<Edge> closeTo = src.getNextStation();
         for (Edge e : closeTo) {
-            Station s = (Station) e.value;
-            s.setPredecessur(a);
-            if(a.getBelongTO().length == s.getBelongTO().length) {   //same line
-                LineStation ls = linesMap.get(a.getBelongTO()[0].getLineName());
-                s.setDistance(ls.getMedianTime()+e.getTime());
+            Station nextStation = (Station) e.value;
+            nextStation.setPredecessur(src);
+            if(src.getBelongTO().length == nextStation.getBelongTO().length) {   //same line
+                LineStation ls = stationGraph.getLinesMap().get(src.getBelongTO()[0]);
+                nextStation.setDistance(ls.getMedianTime()+e.getTime());
             }
 
             else{
-                LineStation ls = (a.getBelongTO()[0]!=s.getBelongTO()[0]) ? a.getBelongTO()[0] : a.getBelongTO()[1];
-                ls = linesMap.get(ls.getLineName());
-                s.setDistance(ls.getMedianTime()+e.getTime());
+                String colorLine = (!src.getBelongTO()[0].equals(nextStation.getBelongTO()[0])) ? src.getBelongTO()[0] : src.getBelongTO()[1];
+                LineStation ls = stationGraph.getLinesMap().get(colorLine);
+                nextStation.setDistance(ls.getMedianTime()+e.getTime());
             }
-            s.setPredecessur(a);
-            ((LinkedList<Station>) queue).add(s);
+            nextStation.setPredecessur(src);
+            queue.add(nextStation);
         }
         while (queue!=null){
             Station min = deQueue(queue);
@@ -116,12 +143,12 @@ public class SubwayTrip {
                     boolean sameLine=false;
                     for (int i = 0; i < min.getPredecessur().getBelongTO().length; i++) {
                         for (int j = 0; j < prox.getBelongTO().length; j++) {
-                            if(min.getPredecessur().getBelongTO()[i].getLineName().equals(prox.getBelongTO()[j].getLineName())) {
+                            if(min.getPredecessur().getBelongTO()[i].equals(prox.getBelongTO()[j])) {
                                 sameLine = true;
                                 time+=v.getTime();
                                 prox.setDistance(time);
                                 prox.setPredecessur(min);
-                                ((LinkedList<Station>) queue).add(prox);
+                                queue.add(prox);
                                 break;
                             }
                         }
@@ -130,9 +157,9 @@ public class SubwayTrip {
                     if(!sameLine) {
                         for (int i = 0; i < prox.getBelongTO().length; i++) {
                             for (int j = 0; j < min.getBelongTO().length; j++) {
-                                if (prox.getBelongTO()[i].getLineName().equals(min.getBelongTO()[j].getLineName())) {
-                                    commonLine = min.getBelongTO()[j].getLineName();
-                                    LineStation ls = linesMap.get(commonLine);
+                                if (prox.getBelongTO()[i].equals(min.getBelongTO()[j])) {
+                                    commonLine = min.getBelongTO()[j];
+                                    LineStation ls = stationGraph.getLinesMap().get(commonLine);
                                     LinkedList<Edge> lsEgde = ls.getNextLine();
                                     String currentLine = getCurrentLine(min.getPredecessur(), min);
                                     for (Edge l : lsEgde) {
@@ -143,7 +170,7 @@ public class SubwayTrip {
                                             time += v.getTime();
                                             prox.setDistance(time);
                                             prox.setPredecessur(min);
-                                            ((LinkedList<Station>) queue).add(prox);
+                                            queue.add(prox);
                                         }
 
                                     }
@@ -167,12 +194,11 @@ public class SubwayTrip {
         }
     }
 
-
     private static String getCurrentLine(Station predecessur, Station curr) {
         for (int i = 0; i < predecessur.getBelongTO().length; i++) {
             for (int j = 0; j < curr.getBelongTO().length; j++) {
-                if(predecessur.getBelongTO()[i].getLineName().equals(curr.getBelongTO()[j].getLineName()))
-                    return predecessur.getBelongTO()[i].getLineName();
+                if(predecessur.getBelongTO()[i].equals(curr.getBelongTO()[j]))
+                    return predecessur.getBelongTO()[i];
             }
         }
         return null;
@@ -200,7 +226,7 @@ public class SubwayTrip {
             visited.add(a);
             a.setPredecessur(null);
         }
-        LinkedList<Edge> edges = stationGraph.getStation(visited.getLast());
+        LinkedList<Edge> edges = stationGraph.getADJList(visited.getLast());
         for (Edge edge : edges) {
             if(visited.contains(edge.value))
                 continue;
@@ -246,69 +272,12 @@ public class SubwayTrip {
             lessPath = (LinkedList<Station>) visited.clone();
             count = res;
         }
-
-
     }
 
     private static void printPath(LinkedList<Station> visited) {
         for (Station station : visited)
             System.out.println(station+" ");
         System.out.println();
-    }
-
-    private static void setLines(HashMap<String, LineStation> lineMap, BufferedReader bufferedReader, int size) throws IOException {
-        for (int i = 0; i < size; i++) {
-            String[] line = StringUtils.split(bufferedReader.readLine()," ");
-            String key = line[0].trim();
-            LineStation ls = new LineStation(key);
-            ls.setMedianTime(line[1].trim());
-            lineMap.put(key, ls);
-        }
-        String line;
-        while ((line=bufferedReader.readLine())!=null){
-            addLineToAdjList(lineMap, line);
-        }
-    }
-
-    private static void addLineToAdjList(HashMap<String, LineStation> lineMap, String line) {
-        String [] aux = line.split(" ");
-        String first = aux[0].trim();
-        LineStation f = lineMap.get(first);
-        String sec = aux[1].trim();
-        LineStation s = lineMap.get(sec);
-        f.setNextLine(s, aux[2].trim());
-        s.setNextLine(f, aux[2].trim());
-    }
-
-    private static void setStations(HashMap<String, Station> map, BufferedReader bufferedReader, int size) throws IOException {
-        for (int i = 0; i < size; i++) {
-            String[] line = StringUtils.split(bufferedReader.readLine(),":\t");
-            String key = line[0].trim();
-            Station in = new Station(key); //create new station
-            String[] belong = StringUtils.split(line[1], "\t ");
-            LineStation[] arr = new LineStation[belong.length];
-            for (int j = 0; j < belong.length; j++) {
-                LineStation lineStation = new LineStation(belong[j]);
-                arr[j] = lineStation;
-            }
-            in.setBelongTO(arr);
-            map.put(key, in);
-        }
-        String all;
-        while ((all = bufferedReader.readLine())!=null){
-            addToAdjList(map, all);
-        }
-    }
-
-    private static void addToAdjList(HashMap<String, Station> map, String all) {
-        String[] aux = StringUtils.split(all,":",2);
-        String firstStation = aux[0].trim();
-        aux = StringUtils.split(aux[1],"-");
-        String second = aux[0].trim();
-        Station first = map.get(firstStation);
-        Station sec = map.get(second);
-        first.setNextStation(sec, aux[1]);
-        sec.setNextStation(first, aux[1]);
     }
 }
 

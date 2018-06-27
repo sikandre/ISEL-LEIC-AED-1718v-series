@@ -25,12 +25,7 @@ public class TreeUtilsTest {
         treeInsert(bst, 65);
         treeInsert(bst, 80);
 
-        Predicate<Integer> predicate = new Predicate<Integer>() {
-            @Override
-            public boolean test(Integer integer) {
-                return integer>=70;
-            }
-        };
+        Predicate<Integer> predicate = integer -> integer>=70;
         Assertions.assertEquals((Integer) 150, sumIf(bst.root,predicate));
     }
     @Test
@@ -45,7 +40,7 @@ public class TreeUtilsTest {
         treeInsert(bst, 65);
         treeInsert(bst, 80);
 
-        ArrayList<Integer> res = new ArrayList<Integer>(Arrays.asList(80,70,65,60,55,50,20));
+        ArrayList<Integer> res = new ArrayList<>(Arrays.asList(80, 70, 65, 60, 55, 50, 20));
 
         Assertions.assertIterableEquals(res, getByDecreasingOrder(bst.root));
     }
@@ -61,7 +56,7 @@ public class TreeUtilsTest {
         treeInsert(bst, 65);
         treeInsert(bst, 80);
 
-        ArrayList<Integer> res = new ArrayList<Integer>(Arrays.asList(80,70,65,60,55,50,20));
+        ArrayList<Integer> res = new ArrayList<>(Arrays.asList(80, 70, 65, 60, 55, 50, 20));
         Assertions.assertEquals(true, isBalanced(bst.root));
     }
 
@@ -80,7 +75,7 @@ public class TreeUtilsTest {
 
 
         ArrayList<Integer> res = new ArrayList<Integer>(Arrays.asList(80,70,65,60,55,50,20));
-        Assertions.assertEquals(false, isBalanced(bst.root));
+        Assertions.assertFalse(isBalanced(bst.root));
     }
 
 
@@ -104,54 +99,4 @@ public class TreeUtilsTest {
             y.right = curr;
     }
 
-    @Test
-    public void  isLower(){
-        BST<Integer> bst = new BST<>();
-
-        treeInsert(bst, 60);
-        treeInsert(bst, 50);
-        treeInsert(bst, 70);
-        treeInsert(bst, 20);
-        treeInsert(bst, 55);
-        treeInsert(bst, 65);
-        treeInsert(bst, 80);
-        treeInsert(bst, 85);
-
-
-        Assertions.assertEquals((Integer) 60,lower(bst.root, 64));
-    }
-    @Test
-    public void  kSmall(){
-        BST<Integer> bst = new BST<>();
-
-        treeInsert(bst, 60);
-        treeInsert(bst, 50);
-        treeInsert(bst, 70);
-        treeInsert(bst, 20);
-        treeInsert(bst, 55);
-        treeInsert(bst, 65);
-        treeInsert(bst, 80);
-        treeInsert(bst, 85);
-
-        ArrayList<Integer> res = new ArrayList<Integer>(Arrays.asList(80,70,65,60,55,50,20));
-
-        Assertions.assertEquals((Integer) 80,ksmallest(bst.root, 7));
-    }
-
-    @Test
-    public void  sibillings(){
-        BST<Integer> bst = new BST<>();
-
-        treeInsert(bst, 60);
-        treeInsert(bst, 50);
-        treeInsert(bst, 70);
-        treeInsert(bst, 20);
-        treeInsert(bst, 55);
-        treeInsert(bst, 65);
-        treeInsert(bst, 80);
-        treeInsert(bst, 85);
-
-        ArrayList<Integer> res = new ArrayList<Integer>(Arrays.asList(80,70,65,60,55,50,20));
-        Assertions.assertEquals(false,areSibillingsInBST(bst.root, 70,80));
-    }
 }

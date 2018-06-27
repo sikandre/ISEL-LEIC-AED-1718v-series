@@ -4,7 +4,7 @@ import java.util.LinkedList;
 
 public class Station {
     private String stationName;
-    private LineStation[] belongTO;
+    private String[] belongTO;
     private LinkedList<Edge> nextStation;
     private boolean isVisited;
     private int distance = Integer.MAX_VALUE;
@@ -21,11 +21,11 @@ public class Station {
     }
 
 
-    public LineStation [] getBelongTO() {
+    public String [] getBelongTO() {
         return belongTO;
     }
 
-    public void setBelongTO(LineStation[] belongTO) {
+    public void setBelongTO(String[] belongTO) {
         this.belongTO = belongTO;
     }
 
@@ -43,9 +43,7 @@ public class Station {
 
     @Override
     public String toString() {
-        return "Station{" +
-                "stationName='" + stationName + '\'' +
-                '}';
+        return "{stationName = '" + stationName + '\'' + '}';
     }
 
     public void setDistance(int distance) {
