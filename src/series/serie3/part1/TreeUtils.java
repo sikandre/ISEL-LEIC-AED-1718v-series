@@ -1,7 +1,6 @@
-package series.serie3;
+package series.serie3.part1;
 
-import java.util.Iterator;
-import java.util.NoSuchElementException;
+import java.util.*;
 import java.util.function.Predicate;
 
 public class TreeUtils {
@@ -78,6 +77,5 @@ public class TreeUtils {
         int r = depth(root.right);
         return Math.max(l,r)+1;
     }
-
 
 }

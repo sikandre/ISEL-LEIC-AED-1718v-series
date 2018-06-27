@@ -1,4 +1,4 @@
-package series.serie3;
+package series.serie3.part1;
 
 import java.util.*;
 import java.util.function.Predicate;
@@ -50,7 +50,7 @@ public class Iterables {
             return o1-o2;
         }
     } ;
-    static <E> Iterable<E> getTheIncreasingSequence(Iterable<E> sequence, Comparator<E> cmp){
+    public static <E> Iterable<E> getTheIncreasingSequence(Iterable<E> sequence, Comparator<E> cmp){
         return new Iterable<E>() {
             @Override
             public Iterator<E> iterator() {
@@ -109,18 +109,6 @@ public class Iterables {
 
                     @Override
                     public boolean hasNext() {
-                        /*if(current!=null) return true;
-
-                        while (it.hasNext() || subIt.hasNext()) {
-                            String aux = subIt.next();
-                            if(predicate.test(aux.toLowerCase())) {
-                                System.out.println(aux);
-                                current = aux;
-                                return true;
-                            }
-                        }
-                        return false;
-                        */
                         while(current==null){
                             if(subIt!=null && subIt.hasNext()) {
                                 String aux = subIt.next();

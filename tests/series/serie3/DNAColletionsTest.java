@@ -1,7 +1,7 @@
 package series.serie3;
 
 import org.junit.jupiter.api.Test;
-import static series.serie3.DNACustomCollection.*;
+import static series.serie3.part1.DNACustomCollection.*;
 
 
 public class DNAColletionsTest {
@@ -18,6 +18,6 @@ public class DNAColletionsTest {
             add(keys[i]);
 
         System.out.println(prefixCount("c")); // res=0
-        
+
     }
 }

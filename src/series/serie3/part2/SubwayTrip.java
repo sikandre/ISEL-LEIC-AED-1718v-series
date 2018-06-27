@@ -33,6 +33,9 @@ public class SubwayTrip {
         stationGraph = new StationGraph(stationsMap);
 
 
+
+
+
         /*select stations path*/
         Station a = stationGraph.getStationHashMap().get("Reboleira");
         Station b = stationGraph.getStationHashMap().get("Alvalade");

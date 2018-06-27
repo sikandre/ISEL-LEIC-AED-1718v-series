@@ -2,11 +2,12 @@ package series.serie3;
 
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
+import series.serie3.part1.Iterables;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 
-import static series.serie3.Iterables.*;
+import static series.serie3.part1.Iterables.*;
 
 
 public class IterablesTest {
@@ -15,7 +16,7 @@ public class IterablesTest {
     public void testIter(){
         ArrayList<Integer> arrayList=new  ArrayList<Integer>(Arrays.asList(1,3));
         ArrayList<Integer> arrayList1=new  ArrayList<Integer>(Arrays.asList(1));
-        Assertions.assertIterableEquals(arrayList1,Iterables.alternateEvenOdd(arrayList));
+        Assertions.assertIterableEquals(arrayList1,alternateEvenOdd(arrayList));
 
     }
 

@@ -1,4 +1,4 @@
-package series.serie3;
+package series.serie3.part1;
 
 public class DNACustomCollection {
     private static final int DNA_FRAGMENTS = 4;

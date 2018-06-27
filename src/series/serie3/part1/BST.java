@@ -1,4 +1,4 @@
-package series.serie3;
+package series.serie3.part1;
 
 public class BST<E extends Comparable<E>> {
     Node<E> root;

@@ -2,12 +2,14 @@ package series.serie3;
 
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
+import series.serie3.part1.BST;
+import series.serie3.part1.Node;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.function.Predicate;
 
-import static series.serie3.TreeUtils.*;
+import static series.serie3.part1.TreeUtils.*;
 
 public class TreeUtilsTest {
 
@@ -100,5 +102,56 @@ public class TreeUtilsTest {
                 y.left=curr;
         else
             y.right = curr;
+    }
+
+    @Test
+    public void  isLower(){
+        BST<Integer> bst = new BST<>();
+
+        treeInsert(bst, 60);
+        treeInsert(bst, 50);
+        treeInsert(bst, 70);
+        treeInsert(bst, 20);
+        treeInsert(bst, 55);
+        treeInsert(bst, 65);
+        treeInsert(bst, 80);
+        treeInsert(bst, 85);
+
+
+        Assertions.assertEquals((Integer) 60,lower(bst.root, 64));
+    }
+    @Test
+    public void  kSmall(){
+        BST<Integer> bst = new BST<>();
+
+        treeInsert(bst, 60);
+        treeInsert(bst, 50);
+        treeInsert(bst, 70);
+        treeInsert(bst, 20);
+        treeInsert(bst, 55);
+        treeInsert(bst, 65);
+        treeInsert(bst, 80);
+        treeInsert(bst, 85);
+
+        ArrayList<Integer> res = new ArrayList<Integer>(Arrays.asList(80,70,65,60,55,50,20));
+
+        Assertions.assertEquals((Integer) 80,ksmallest(bst.root, 7));
+    }
+
+    @Test
+    public void  sibillings(){
+        BST<Integer> bst = new BST<>();
+
+        treeInsert(bst, 60);
+        treeInsert(bst, 50);
+        treeInsert(bst, 70);
+        treeInsert(bst, 20);
+        treeInsert(bst, 55);
+        treeInsert(bst, 65);
+        treeInsert(bst, 80);
+        treeInsert(bst, 85);
+
+        ArrayList<Integer> res = new ArrayList<Integer>(Arrays.asList(80,70,65,60,55,50,20));
+        Assertions.assertEquals(false,areSibillingsInBST(bst.root, 70,80));
     }
 }
