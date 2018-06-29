@@ -105,7 +105,7 @@ public class SubwayTrip {
     }
 
     private static LinkedList<Station> getFastestPath(Station src, Station b) {
-        int time=0;
+        int time;
         initSource(src);
         Queue<Station> queue = new LinkedList<>();
         LinkedList<Edge> closeTo = src.getNextStation();
@@ -116,7 +116,7 @@ public class SubwayTrip {
                 LineStation ls = stationGraph.getLinesMap().get(src.getBelongTO()[0]);
                 nextStation.setDistance(ls.getMedianTime()+e.getTime());
             }
-
+            //different color line
             else{
                 String colorLine = (!src.getBelongTO()[0].equals(nextStation.getBelongTO()[0])) ? src.getBelongTO()[0] : src.getBelongTO()[1];
                 LineStation ls = stationGraph.getLinesMap().get(colorLine);
@@ -126,7 +126,7 @@ public class SubwayTrip {
             queue.add(nextStation);
         }
         while (queue!=null){
-            Station min = deQueue(queue);
+            Station min = deQueue(queue);   //get closest edge and work it
             if(min.getStationName().equals(b.getStationName())){
                 LinkedList<Station> res = new LinkedList<>();
                 while (min.getPredecessur()!=null){
@@ -138,13 +138,12 @@ public class SubwayTrip {
             for (Edge v : min.getNextStation() ) {
                 Station prox = (Station) v.value;
                 if(prox.getDistance()==Integer.MAX_VALUE){
-
                     time=min.getDistance();
                     boolean sameLine=false;
-                    for (int i = 0; i < min.getPredecessur().getBelongTO().length; i++) {
+                    for (int i = 0; i < min.getPredecessur().getBelongTO().length; i++) {   //set times if is in same color line
                         for (int j = 0; j < prox.getBelongTO().length; j++) {
                             if(min.getPredecessur().getBelongTO()[i].equals(prox.getBelongTO()[j])) {
-                                sameLine = true;
+                                sameLine = true;        //prevent other condition
                                 time+=v.getTime();
                                 prox.setDistance(time);
                                 prox.setPredecessur(min);
@@ -154,7 +153,7 @@ public class SubwayTrip {
                         }
                     }
                     String commonLine;
-                    if(!sameLine) {
+                    if(!sameLine) {  //calculate times for change color lines
                         for (int i = 0; i < prox.getBelongTO().length; i++) {
                             for (int j = 0; j < min.getBelongTO().length; j++) {
                                 if (prox.getBelongTO()[i].equals(min.getBelongTO()[j])) {
